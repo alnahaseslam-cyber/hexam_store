@@ -1,0 +1,1326 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HEXAM | Premium Winter Streetwear</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;800&family=Oswald:wght@400;700&display=swap" rel="stylesheet">
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        arabic: ['Cairo', 'sans-serif'],
+                        display: ['Oswald', 'sans-serif'],
+                    },
+                    colors: {
+                        hexDark: '#0a0a0a',
+                        hexLight: '#ffffff',
+                        hexGray: '#242424',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            font-family: 'Cairo', sans-serif;
+            overflow-x: hidden;
+            -webkit-tap-highlight-color: transparent;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #555; border-radius: 3px; }
+        .dark ::-webkit-scrollbar-thumb { background: #333; }
+
+        /* Hide elements gracefully */
+        .hidden-view { display: none !important; }
+
+        /* Blur Effects */
+        .bw-hover-effect {
+            filter: blur(6px);
+            transition: filter 0.5s ease, transform 0.5s ease;
+        }
+        .group:hover .bw-hover-effect {
+            filter: blur(0px);
+            transform: scale(1.05);
+        }
+
+        .thumb-bw {
+            filter: blur(5px);
+            opacity: 0.85;
+            transition: all 0.3s ease;
+        }
+        .thumb-bw:hover, .thumb-bw.active-thumb {
+            filter: blur(0px);
+            opacity: 1;
+        }
+
+        /* Cart Initialization Fix */
+        #cart-sidebar {
+            transform: translateX(100%);
+        }
+        .rtl #cart-sidebar, [dir="rtl"] #cart-sidebar {
+            transform: translateX(-100%);
+        }
+        .cart-open {
+            transform: translateX(0) !important;
+        }
+
+        /* Animations */
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .fade-in { animation: fadeIn 0.4s ease forwards; }
+
+        @keyframes slideUpFade {
+            from { opacity: 0; transform: translateY(40px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-on-scroll { opacity: 0; }
+        .is-visible { animation: slideUpFade 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+        
+        @keyframes trackingIn {
+            0% { letter-spacing: -0.5em; opacity: 0; }
+            40% { opacity: 0.6; }
+            100% { letter-spacing: 0.2em; opacity: 1; }
+        }
+        .text-focus-in { animation: trackingIn 1.2s cubic-bezier(0.215, 0.610, 0.355, 1.000) both; }
+
+        /* Dynamic Pop Effect */
+        .btn-pop { transition: transform 0.15s ease, box-shadow 0.25s ease; }
+        .btn-pop:active { transform: scale(0.95); }
+
+        /* --- New: Reveal-on-scroll for grid items --- */
+        .reveal-item {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1), transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .reveal-item.revealed {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Product card hover polish */
+        .product-card {
+            transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .product-card:hover {
+            transform: translateY(-8px);
+        }
+        .product-card .card-image-wrap {
+            transition: box-shadow 0.4s ease;
+        }
+        .product-card:hover .card-image-wrap {
+            box-shadow: 0 20px 40px -12px rgba(0,0,0,0.35);
+        }
+
+        /* View transition */
+        .view-transition {
+            animation: viewFadeIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
+        }
+        @keyframes viewFadeIn {
+            from { opacity: 0; transform: translateY(16px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Cart item enter animation */
+        @keyframes cartItemIn {
+            from { opacity: 0; transform: translateX(20px) scale(0.97); }
+            to { opacity: 1; transform: translateX(0) scale(1); }
+        }
+        [dir="rtl"] .cart-item-enter {
+            animation: cartItemIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
+        }
+
+        /* Modal icon pulse */
+        @keyframes iconPop {
+            0% { transform: scale(0.4); opacity: 0; }
+            60% { transform: scale(1.12); opacity: 1; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        .icon-pop { animation: iconPop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) both; }
+
+        /* Hero text subtle float */
+        @keyframes heroFloat {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-6px); }
+        }
+        .hero-float { animation: heroFloat 5s ease-in-out infinite; }
+
+        /* Hero CTA button entrance */
+        @keyframes ctaFadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .hero-cta {
+            animation: ctaFadeIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) 1s both;
+        }
+
+        /* Size button select pop */
+        .size-btn { transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease; }
+        .size-btn:active { transform: scale(0.9); }
+        .size-btn.selected-pop { animation: sizePop 0.35s cubic-bezier(0.34, 1.56, 0.64, 1); }
+        @keyframes sizePop {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.15); }
+            100% { transform: scale(1); }
+        }
+
+        /* Cart badge bump (kept, plus smoother easing) */
+        #cart-badge { transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); }
+    </style>
+</head>
+<body class="bg-hexLight text-hexDark dark:bg-hexDark dark:text-hexLight antialiased selection:bg-black selection:text-white dark:selection:bg-white dark:selection:text-black min-h-screen flex flex-col">
+
+    <nav class="fixed top-0 w-full z-50 flex flex-col">
+        <div class="w-full bg-hexLight/90 dark:bg-hexDark/90 backdrop-blur-md border-b border-black/10 dark:border-white/10 transition-colors duration-300">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 sm:h-20 flex items-center justify-between relative">
+                
+                <!-- Left: Theme Toggle -->
+                <button onclick="toggleTheme()" class="btn-pop w-10 h-10 flex items-center justify-center rounded-full border border-black/20 dark:border-white/20 hover:bg-black/5 dark:hover:bg-white/5 transition-colors group z-10" aria-label="Toggle Theme">
+                    <svg class="w-5 h-5 text-black dark:hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
+                    <svg class="w-5 h-5 text-white hidden dark:block" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+                </button>
+                
+                <!-- Center: Interactive Logo -->
+                <a href="#" onclick="showHome(event)" class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 font-display text-2xl md:text-3xl font-bold tracking-[0.2em] uppercase hover:scale-105 transition-transform duration-300 flex items-center gap-1 z-0 text-black dark:text-white group">
+                    HEXAM<span class="w-2 h-2 bg-black dark:bg-white rounded-full animate-pulse group-hover:bg-gray-500 transition-colors"></span>
+                </a>
+
+                <!-- Right: Cart -->
+                <button onclick="toggleCart()" class="btn-pop relative flex items-center gap-2 font-arabic font-semibold hover:opacity-70 transition-opacity z-10">
+                    <span class="hidden sm:block text-sm uppercase tracking-wide">السلة</span>
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
+                    <span id="cart-badge" class="absolute -top-2 -right-2 bg-black dark:bg-white text-white dark:text-black text-[10px] w-5 h-5 rounded-full flex items-center justify-center font-bold border border-white dark:border-black transition-transform duration-300">0</span>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <main class="flex-grow pt-20 sm:pt-24">
+        <div id="home-view" class="fade-in">
+            <!-- Hero Section -->
+            <section class="relative h-[60vh] md:h-[70vh] w-full flex items-center justify-center overflow-hidden bg-black">
+                <img src="photo_2026-08-22_16-05-48.jpg" class="absolute inset-0 w-full h-full object-cover opacity-40 mix-blend-luminosity" alt="HEXAM Winter Collection">
+                <div class="absolute inset-0 bg-black/40"></div>
+                <div class="relative z-10 text-center px-4">
+                    <h1 class="font-display text-5xl md:text-8xl font-bold text-white uppercase tracking-[0.2em] mb-4 text-focus-in hero-float">HEXAM</h1>
+                    <p class="font-arabic text-gray-300 text-lg md:text-2xl max-w-2xl mx-auto animate-on-scroll mb-8" style="animation-delay: 0.5s;">الدفء والأناقة في قطع محدودة. مجموعة الشتاء الحصرية.</p>
+                    <button onclick="scrollToCollection()" class="btn-pop hero-cta inline-flex items-center gap-2 bg-white text-black dark:bg-black dark:text-white font-arabic font-bold px-8 py-4 rounded-full uppercase tracking-wide text-sm md:text-base shadow-xl hover:shadow-2xl hover:scale-105 transition-all duration-300">
+                        اكتشف المنتجات
+                        <svg class="w-4 h-4 animate-bounce" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path></svg>
+                    </button>
+                </div>
+            </section>
+
+            <!-- Product Grid -->
+            <section id="collection-section" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+                <div class="flex items-end justify-between border-b border-black/10 dark:border-white/10 pb-4 mb-12 reveal-item">
+                    <h2 class="font-display text-3xl md:text-4xl font-bold tracking-wider uppercase">The Collection</h2>
+                    <span class="font-arabic text-sm text-gray-500">New Collection </span>
+                </div>
+                
+                <div id="products-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-16">
+                    <!-- Products will be injected here via JS -->
+                </div>
+            </section>
+
+            <!-- Testimonials -->
+            <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-20">
+                <div class="flex items-end justify-between border-b border-black/10 dark:border-white/10 pb-4 mb-12 reveal-item">
+                    <h2 class="font-display text-3xl md:text-4xl font-bold tracking-wider uppercase">آراء عملائنا</h2>
+                    <button onclick="openFeedbackModal()" class="btn-pop text-xs md:text-sm font-arabic font-bold underline hover:text-gray-500 transition-colors whitespace-nowrap">شارك رأيك</button>
+                </div>
+                <div id="testimonials-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <!-- Testimonials injected via JS -->
+                </div>
+            </section>
+        </div>
+
+        <div id="product-view" class="hidden-view max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-20 pb-28 md:pb-20">
+            <button onclick="showHome(event)" class="btn-pop mb-8 flex items-center gap-2 text-sm font-arabic font-semibold hover:text-gray-500 transition-colors w-fit">
+                <svg class="w-5 h-5 rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                العودة للمجموعة
+            </button>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-12 lg:gap-20">
+                
+                <!-- Images Area -->
+                <div class="flex flex-col gap-4">
+                    <div class="w-full aspect-[4/5] bg-gray-200 dark:bg-hexGray overflow-hidden rounded-md relative shadow-lg cursor-zoom-in" onclick="openLightbox()">
+                        <img id="pd-main-img" src="" class="w-full h-full object-cover transition-opacity duration-300" alt="Product Image">
+                        <div class="absolute bottom-3 left-3 bg-black/60 text-white text-xs px-3 py-1.5 rounded-full font-arabic flex items-center gap-1 pointer-events-none">
+                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                            تكبير
+                        </div>
+                    </div>
+                    
+                    <div class="grid grid-cols-3 gap-4" id="pd-thumbnails">
+                        <!-- Thumbnails injected via JS -->
+                    </div>
+                </div>
+
+                <!-- Info Area -->
+                <div class="flex flex-col pt-4 md:pt-10">
+                    <p id="pd-category" class="font-display tracking-[0.2em] text-xs text-gray-500 uppercase mb-2"></p>
+                    <h1 id="pd-title" class="font-display text-4xl md:text-5xl font-bold uppercase mb-4 leading-tight"></h1>
+                    <p id="pd-price" class="font-arabic text-2xl font-bold mb-8"></p>
+                    
+                    <p id="pd-desc" class="font-arabic text-gray-600 dark:text-gray-400 leading-relaxed mb-10 text-lg"></p>
+
+                    <!-- Sizes -->
+                    <div class="mb-10" id="size-selection-area">
+                        <div class="flex justify-between items-center mb-4">
+                            <span class="font-arabic font-bold text-sm">اختر المقاس:</span>
+                            <button type="button" onclick="openSizeGuide()" class="btn-pop text-xs font-arabic text-gray-500 hover:text-black dark:hover:text-white underline flex items-center gap-1">
+                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                دليل المقاسات
+                            </button>
+                        </div>
+                        <div class="flex flex-wrap gap-3" id="pd-sizes">
+                            <!-- Sizes injected via JS -->
+                        </div>
+                        <p id="pd-stock-msg" class="font-arabic text-xs text-gray-500 mt-3"></p>
+                        <p id="size-error-msg" class="hidden font-arabic text-sm text-red-600 dark:text-red-400 mt-3 font-bold transition-opacity flex items-center gap-2">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                            برجاء اختيار المقاس أولاً لتتمكن من إتمام الطلب.
+                        </p>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="flex flex-col gap-4 mt-auto">
+                        <button onclick="addToCartFromDetail()" class="btn-pop w-full bg-black dark:bg-white text-white dark:text-black font-arabic font-bold py-4 rounded-md hover:opacity-80 transition-opacity flex items-center justify-center gap-2 text-lg shadow-md">
+                            إضافة إلى السلة
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+                        </button>
+                        <button onclick="buyNowFromDetail()" class="btn-pop w-full border-2 border-black dark:border-white text-black dark:text-white font-arabic font-bold py-4 rounded-md hover:bg-black hover:text-white dark:hover:bg-white dark:hover:text-black transition-colors text-lg">
+                            شراء الآن
+                        </button>
+                        <button onclick="shareCurrentProduct()" class="btn-pop w-full flex items-center justify-center gap-2 text-sm font-arabic font-semibold text-gray-500 hover:text-black dark:hover:text-white transition-colors py-2">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342a3 3 0 100-2.684m0 2.684a3 3 0 100 2.684m0-2.684l6.632-3.316m-6.632 6l6.632 3.316m0-9.316a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 6.632a3 3 0 105.367 2.684 3 3 0 00-5.367-2.684z"></path></svg>
+                            مشاركة رابط المنتج
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Related Products -->
+            <div class="mt-20 pt-12 border-t border-black/10 dark:border-white/10">
+                <h3 class="font-display text-2xl md:text-3xl font-bold uppercase tracking-wider mb-8">قد يعجبك أيضاً</h3>
+                <div id="related-products-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-12">
+                    <!-- Related products injected via JS -->
+                </div>
+            </div>
+
+            <!-- Sticky mobile add-to-cart bar -->
+            <div class="md:hidden fixed bottom-0 inset-x-0 z-40 bg-hexLight/95 dark:bg-hexDark/95 backdrop-blur-md border-t border-black/10 dark:border-white/10 px-4 py-3 flex items-center gap-3 shadow-[0_-4px_20px_rgba(0,0,0,0.1)]">
+                <span id="pd-sticky-price" class="font-display font-bold text-lg whitespace-nowrap"></span>
+                <button onclick="addToCartFromDetail()" class="btn-pop flex-grow bg-black dark:bg-white text-white dark:text-black font-arabic font-bold py-3 rounded-md text-sm">
+                    إضافة إلى السلة
+                </button>
+            </div>
+        </div>
+
+        <div id="checkout-view" class="hidden-view max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-20">
+            <div class="text-center mb-12">
+                <h2 class="font-display text-4xl font-bold uppercase mb-2">Checkout</h2>
+                <p class="font-arabic text-gray-500">إتمام عملية الشراء - الدفع عند الاستلام</p>
+            </div>
+
+            <div class="bg-white dark:bg-hexGray p-6 md:p-10 rounded-xl shadow-lg border border-black/5 dark:border-white/5">
+                <form id="checkout-form" onsubmit="processOrder(event)" class="space-y-6 font-arabic">
+                    <div>
+                        <label class="block text-sm font-bold mb-2">الاسم بالكامل (عربي فقط)</label>
+                        <input type="text" id="co-name" required placeholder="مثال: أحمد محمد" class="w-full bg-gray-50 dark:bg-hexDark border border-gray-300 dark:border-gray-700 rounded-md px-4 py-3 focus:outline-none focus:border-black dark:focus:border-white transition-colors">
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-sm font-bold mb-2">رقم الهاتف الأساسي</label>
+                            <input type="tel" id="co-phone" required dir="ltr" placeholder="01xxxxxxxxx" maxlength="11" class="w-full bg-gray-50 dark:bg-hexDark border border-gray-300 dark:border-gray-700 rounded-md px-4 py-3 focus:outline-none focus:border-black dark:focus:border-white transition-colors text-right">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-bold mb-2">رقم هاتف إضافي (اختياري)</label>
+                            <input type="tel" id="co-phone-2" dir="ltr" placeholder="01xxxxxxxxx" maxlength="11" class="w-full bg-gray-50 dark:bg-hexDark border border-gray-300 dark:border-gray-700 rounded-md px-4 py-3 focus:outline-none focus:border-black dark:focus:border-white transition-colors text-right">
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-bold mb-2">العنوان بالتفصيل (المحافظة، المدينة، الشارع) - عربي فقط</label>
+                        <textarea id="co-address" required rows="3" class="w-full bg-gray-50 dark:bg-hexDark border border-gray-300 dark:border-gray-700 rounded-md px-4 py-3 focus:outline-none focus:border-black dark:focus:border-white transition-colors"></textarea>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-bold mb-2">ملاحظة (اختياري)</label>
+                        <textarea id="co-note" rows="2" placeholder="أي ملاحظة تحب تضيفها لطلبك... (مش إجباري)" class="w-full bg-gray-50 dark:bg-hexDark border border-gray-300 dark:border-gray-700 rounded-md px-4 py-3 focus:outline-none focus:border-black dark:focus:border-white transition-colors"></textarea>
+                    </div>
+
+                    <div class="border-t border-gray-200 dark:border-gray-700 pt-6 mt-8">
+                        <div class="flex justify-between items-center mb-2 font-bold text-gray-600 dark:text-gray-400">
+                            <span>رسوم الشحن:</span>
+                            <span class="text-gray-500 text-sm"> الشحن مجانا </span>
+                        </div>
+                        <div class="flex justify-between items-center mb-6 font-bold text-xl">
+                            <span>الإجمالي الكلي:</span>
+                            <span id="co-total" class="font-display tracking-wide"></span>
+                        </div>
+                        <button type="submit" id="co-submit-btn" class="btn-pop w-full bg-black dark:bg-white text-white dark:text-black font-bold py-4 rounded-md hover:opacity-80 transition-opacity text-lg shadow-lg">
+                           تأكيدالطلب 
+                        </button>
+                    </div>
+                </form>
+            </div>
+            <button onclick="showHome(event)" class="mt-8 text-center w-full font-arabic text-sm text-gray-500 hover:text-black dark:hover:text-white underline transition-colors">الغاء والعودة للمتجر</button>
+        </div>
+    </main>
+
+    <div id="cart-overlay" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-[60] opacity-0 pointer-events-none transition-opacity duration-300" onclick="toggleCart()"></div>
+    
+    <aside id="cart-sidebar" class="fixed top-0 bottom-0 end-0 w-full sm:w-[400px] bg-hexLight dark:bg-hexDark z-[70] border-s border-black/10 dark:border-white/10 flex flex-col transition-transform duration-500 cubic-bezier(0.4, 0, 0.2, 1) shadow-2xl">
+        
+        <div class="flex items-center justify-between p-6 border-b border-black/10 dark:border-white/10">
+            <h3 class="font-display font-bold text-2xl uppercase tracking-wider">Cart</h3>
+            <button onclick="toggleCart()" class="btn-pop p-2 hover:rotate-90 transition-transform text-gray-500 hover:text-black dark:hover:text-white">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+            </button>
+        </div>
+
+        <div id="cart-items-container" class="flex-grow overflow-y-auto p-6 flex flex-col gap-6">
+            <!-- Cart items injected via JS -->
+        </div>
+
+        <div class="p-6 border-t border-black/10 dark:border-white/10 bg-gray-50 dark:bg-[#111]">
+            <div class="flex justify-between items-center mb-2 font-bold font-arabic text-sm text-gray-600 dark:text-gray-400">
+                <span>رسوم الشحن:</span>
+                <span>الشحن مجانا</span>
+            </div>
+            <div class="flex justify-between items-center mb-6 font-bold font-arabic">
+                <span class="text-lg">المجموع:</span>
+                <span id="cart-total-price" class="font-display text-2xl">0 EGP</span>
+            </div>
+            <button onclick="goToCheckout()" class="btn-pop w-full bg-black dark:bg-white text-white dark:text-black font-arabic font-bold py-4 rounded-md hover:shadow-lg transition-all text-lg">
+                إتمام الطلب
+            </button>
+        </div>
+    </aside>
+
+    <div id="custom-modal" class="fixed inset-0 z-[100] hidden items-center justify-center bg-black/80 backdrop-blur-sm opacity-0 transition-opacity duration-300 px-4">
+        <div class="bg-white dark:bg-hexGray p-8 max-w-sm w-full rounded-xl shadow-2xl transform scale-95 transition-transform duration-300 text-center border border-black/10 dark:border-white/10 relative overflow-hidden">
+            <div class="absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-gray-500 to-black dark:from-gray-300 dark:to-white"></div>
+            <div id="modal-icon" class="w-16 h-16 mx-auto mb-4 rounded-full flex items-center justify-center bg-gray-100 dark:bg-hexDark shadow-inner">
+                <!-- Icon injected via JS -->
+            </div>
+            <h4 id="modal-title" class="font-display font-bold text-2xl uppercase mb-2"></h4>
+            <p id="modal-msg" class="font-arabic text-gray-600 dark:text-gray-400 mb-6 leading-relaxed text-sm"></p>
+            <button onclick="closeModal()" class="btn-pop w-full bg-black dark:bg-white text-white dark:text-black font-arabic font-bold py-3 rounded-md shadow-md">حسناً، فهمت</button>
+        </div>
+    </div>
+
+    <!-- Size Guide Modal -->
+    <div id="size-guide-modal" class="fixed inset-0 z-[100] hidden items-center justify-center bg-black/80 backdrop-blur-sm opacity-0 transition-opacity duration-300 px-4" onclick="if(event.target === this) closeSizeGuide()">
+        <div class="bg-white dark:bg-hexGray p-6 md:p-8 max-w-md w-full rounded-xl shadow-2xl transform scale-95 transition-transform duration-300 border border-black/10 dark:border-white/10 relative overflow-hidden font-arabic">
+            <div class="absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-gray-500 to-black dark:from-gray-300 dark:to-white"></div>
+            <div class="flex items-center justify-between mb-6">
+                <h4 class="font-display font-bold text-xl uppercase">دليل المقاسات</h4>
+                <button onclick="closeSizeGuide()" class="btn-pop p-1 text-gray-500 hover:text-black dark:hover:text-white"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></button>
+            </div>
+            <table class="w-full text-sm text-center border-collapse">
+                <thead>
+                    <tr class="border-b border-black/10 dark:border-white/10 font-bold">
+                        <td class="py-2">المقاس</td>
+                        <td class="py-2">عرض الصدر (سم)</td>
+                        <td class="py-2">الطول (سم)</td>
+                    </tr>
+                </thead>
+                <tbody class="text-gray-600 dark:text-gray-400">
+                    <tr class="border-b border-black/5 dark:border-white/5"><td class="py-2 font-bold text-black dark:text-white">L</td><td class="py-2">54</td><td class="py-2">70</td></tr>
+                    <tr class="border-b border-black/5 dark:border-white/5"><td class="py-2 font-bold text-black dark:text-white">XL</td><td class="py-2">57</td><td class="py-2">72</td></tr>
+                    <tr><td class="py-2 font-bold text-black dark:text-white">XXL</td><td class="py-2">60</td><td class="py-2">74</td></tr>
+                </tbody>
+            </table>
+            <p class="text-xs text-gray-500 mt-4">القياسات تقريبية وممكن تختلف بنسبة بسيطة حسب طبيعة الخامة.</p>
+        </div>
+    </div>
+
+    <!-- Image Lightbox -->
+    <div id="lightbox-overlay" class="fixed inset-0 z-[110] hidden items-center justify-center bg-black/90 backdrop-blur-sm opacity-0 transition-opacity duration-300 px-4" onclick="if(event.target === this) closeLightbox()">
+        <button onclick="closeLightbox()" class="btn-pop absolute top-6 end-6 text-white p-2 hover:bg-white/10 rounded-full transition-colors" aria-label="إغلاق">
+            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+        </button>
+        <button onclick="lightboxNav(-1)" class="btn-pop absolute start-4 md:start-8 top-1/2 -translate-y-1/2 text-white p-2 hover:bg-white/10 rounded-full transition-colors" aria-label="السابقة">
+            <svg class="w-8 h-8 rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+        </button>
+        <img id="lightbox-img" src="" class="max-w-full max-h-[85vh] object-contain rounded-md" alt="Product zoom">
+        <button onclick="lightboxNav(1)" class="btn-pop absolute end-4 md:end-8 top-1/2 -translate-y-1/2 text-white p-2 hover:bg-white/10 rounded-full transition-colors" aria-label="التالية">
+            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+        </button>
+    </div>
+
+    <!-- Feedback Modal -->
+    <div id="feedback-modal" class="fixed inset-0 z-[100] hidden items-center justify-center bg-black/80 backdrop-blur-sm opacity-0 transition-opacity duration-300 px-4" onclick="if(event.target === this) closeFeedbackModal()">
+        <div class="bg-white dark:bg-hexGray p-6 md:p-8 max-w-md w-full rounded-xl shadow-2xl transform scale-95 transition-transform duration-300 border border-black/10 dark:border-white/10 relative overflow-hidden font-arabic">
+            <div class="absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-gray-500 to-black dark:from-gray-300 dark:to-white"></div>
+            <div class="flex items-center justify-between mb-2">
+                <h4 class="font-display font-bold text-xl uppercase">شاركنا رأيك</h4>
+                <button onclick="closeFeedbackModal()" class="btn-pop p-1 text-gray-500 hover:text-black dark:hover:text-white"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></button>
+            </div>
+            <p id="feedback-modal-sub" class="text-sm text-gray-500 mb-5">رأيك يهمنا ويساعد عملاء تانيين، وقولنا اسمك لو حابب أو سيبه فاضي براحتك.</p>
+            <form id="feedback-form" onsubmit="submitFeedback(event)" class="space-y-4">
+                <div>
+                    <label class="block text-sm font-bold mb-2">اسمك (اختياري)</label>
+                    <input type="text" id="fb-name" placeholder="مثال: أحمد" class="w-full bg-gray-50 dark:bg-hexDark border border-gray-300 dark:border-gray-700 rounded-md px-4 py-3 focus:outline-none focus:border-black dark:focus:border-white transition-colors">
+                </div>
+                <div>
+                    <label class="block text-sm font-bold mb-2">تقييمك</label>
+                    <div id="fb-stars" class="flex gap-2 text-3xl leading-none select-none"></div>
+                </div>
+                <div>
+                    <label class="block text-sm font-bold mb-2">رأيك</label>
+                    <textarea id="fb-text" required rows="3" placeholder="اكتب رأيك في المنتج والخدمة..." class="w-full bg-gray-50 dark:bg-hexDark border border-gray-300 dark:border-gray-700 rounded-md px-4 py-3 focus:outline-none focus:border-black dark:focus:border-white transition-colors"></textarea>
+                </div>
+                <div class="flex gap-3 pt-2">
+                    <button type="button" onclick="closeFeedbackModal()" class="btn-pop flex-1 border-2 border-black dark:border-white text-black dark:text-white font-bold py-3 rounded-md hover:bg-black hover:text-white dark:hover:bg-white dark:hover:text-black transition-colors">مش دلوقتي</button>
+                    <button type="submit" class="btn-pop flex-1 bg-black dark:bg-white text-white dark:text-black font-bold py-3 rounded-md hover:opacity-80 transition-opacity">إرسال</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Footer Links Added Here -->
+    <footer class="border-t border-black/10 dark:border-white/10 bg-white dark:bg-hexDark mt-auto">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 flex flex-col md:flex-row items-center justify-between gap-8">
+            
+            <div class="text-center md:text-start cursor-pointer" onclick="showHome(event)">
+                <span class="font-display font-bold text-3xl tracking-widest uppercase hover:text-gray-500 transition-colors">HEXAM<span class="text-gray-400">.</span></span>
+                <p class="font-arabic text-sm text-gray-500 mt-2">Premium Winter Streetwear</p>
+            </div>
+
+            <div class="flex flex-wrap gap-4 items-center justify-center">
+                <!-- Facebook -->
+                <a href="https://www.facebook.com/eslammostafa.alnahas.7" target="_blank" rel="noopener noreferrer" class="btn-pop px-4 py-2 rounded-full border border-gray-300 dark:border-gray-700 flex items-center gap-2 hover:bg-black hover:text-white dark:hover:bg-white dark:hover:text-black transition-colors font-arabic text-sm" aria-label="Facebook">
+                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12z" fill-rule="evenodd" clip-rule="evenodd"></path></svg>
+                    <span>فيسبوك</span>
+                </a>
+                <!-- Instagram -->
+                <a href="https://www.instagram.com/eng.islam_m_elna7as/?hl=ar" target="_blank" rel="noopener noreferrer" class="btn-pop px-4 py-2 rounded-full border border-gray-300 dark:border-gray-700 flex items-center gap-2 hover:bg-black hover:text-white dark:hover:bg-white dark:hover:text-black transition-colors font-arabic text-sm" aria-label="Instagram">
+                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M12.315 2c2.43 0 2.784.013 3.808.06 1.064.049 1.791.218 2.427.465a4.902 4.902 0 011.772 1.153 4.902 4.902 0 011.153 1.772c.247.636.416 1.363.465 2.427.048 1.067.06 1.407.06 4.123v.08c0 2.643-.012 2.987-.06 4.043-.049 1.064-.218 1.791-.465 2.427a4.902 4.902 0 01-1.153 1.772 4.902 4.902 0 01-1.772 1.153c-.636.247-1.363.416-2.427.465-1.067.048-1.407.06-4.123.06h-.08c-2.643 0-2.987-.012-4.043-.06-1.064-.049-1.791-.218-2.427-.465a4.902 4.902 0 01-1.772-1.153 4.902 4.902 0 01-1.153-1.772c-.247-.636-.416-1.363-.465-2.427-.047-1.024-.06-1.379-.06-3.808v-.63c0-2.43.013-2.784.06-3.808.049-1.064.218-1.791.465-2.427a4.902 4.902 0 011.153-1.772A4.902 4.902 0 015.45 2.525c.636-.247 1.363-.416 2.427-.465C8.901 2.013 9.256 2 11.685 2h.63zm-.081 1.802h-.468c-2.456 0-2.784.011-3.807.058-.975.045-1.504.207-1.857.344-.467.182-.8.398-1.15.748-.35.35-.566.683-.748 1.15-.137.353-.3.882-.344 1.857-.047 1.023-.058 1.351-.058 3.807v.468c0 2.456.011 2.784.058 3.807.045.975.207 1.504.344 1.857.182.466.399.8.748 1.15.35.35.683.566 1.15.748.353.137.882.3 1.857.344 1.054.048 1.37.058 4.041.058h.08c2.597 0 2.917-.01 3.96-.058.976-.045 1.505-.207 1.858-.344.466-.182.8-.398 1.15-.748.35-.35.566-.683.748-1.15.137-.353.3-.882.344-1.857.048-1.055.058-1.37.058-4.041v-.08c0-2.597-.01-2.917-.058-3.96-.045-.976-.207-1.505-.344-1.858a3.097 3.097 0 00-.748-1.15 3.098 3.098 0 00-1.15-.748c-.353-.137-.882-.3-1.857-.344-1.023-.047-1.351-.058-3.807-.058zM12 6.865a5.135 5.135 0 110 10.27 5.135 5.135 0 010-10.27zm0 1.802a3.333 3.333 0 100 6.666 3.333 3.333 0 000-6.666zm5.338-3.205a1.2 1.2 0 110 2.4 1.2 1.2 0 010-2.4z" clip-rule="evenodd"></path></svg>
+                    <span>إنستجرام</span>
+                </a>
+                <!-- TikTok -->
+                <a href="https://tiktok.com/@elna7as3" target="_blank" rel="noopener noreferrer" class="btn-pop px-4 py-2 rounded-full border border-gray-300 dark:border-gray-700 flex items-center gap-2 hover:bg-black hover:text-white dark:hover:bg-white dark:hover:text-black transition-colors font-arabic text-sm" aria-label="TikTok">
+                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-5.2 1.74 2.89 2.89 0 012.31-4.64 2.93 2.93 0 01.88.13V9.4a6.84 6.84 0 00-1-.05A6.33 6.33 0 005 20.1a6.34 6.34 0 0010.86-4.43v-7a8.16 8.16 0 004.77 1.52v-3.4a4.85 4.85 0 01-1-.1z"></path></svg>
+                    <span>تيك توك</span>
+                </a>
+                <!-- WhatsApp -->
+                <a href="https://wa.me/201152656351" target="_blank" rel="noopener noreferrer" class="btn-pop px-4 py-2 rounded-full border border-gray-300 dark:border-gray-700 flex items-center gap-2 hover:bg-black hover:text-white dark:hover:bg-white dark:hover:text-black transition-colors font-arabic text-sm" aria-label="WhatsApp">
+                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
+                    <span>واتساب</span>
+                </a>
+            </div>
+        </div>
+        <div class="text-center pb-6 font-arabic text-xs text-gray-500">
+            © 2026 HEXAM. جميع الحقوق محفوظة.
+        </div>
+    </footer>
+
+    <script>
+        // --- Data ---
+        // ملاحظة: رقم stock عندك تقدر تعدله وقت ما تحب حسب الكمية الحقيقية المتاحة
+        const products = [
+            {
+                id: 1,
+                name: " كرونيك اسود غامق  ",
+                category: "كرونيك اسود ",
+                price: 690,
+                desc: "كرونيك أسود غامق ",
+                sizes: ["XXL", "XL", "L"],
+                stock: 6,
+                images: [
+                    "photo_5_2026-08-18_16-13-39.jpg",
+                    "photo_4_2026-08-18_16-13-39.jpg",
+                    "photo_3_2026-08-18_16-13-39.jpg",
+                    "photo_2_2026-08-18_16-13-39.jpg",
+                    "photo_1_2026-08-18_16-13-39.jpg"
+                ]
+            },
+            {
+                id: 2,
+                name: "كرونيك نبيتي",
+                category: "كرونيك ",
+                price: 690,
+                desc: "كرونيك نبيتي",
+                sizes: ["XXL", "XL", "L"],
+                stock: 4,
+                images: [
+                    "photo_4_2026-08-18_01-30-05.jpg",
+                    "photo_7_2026-08-18_01-30-06.jpg",
+                    "photo_8_2026-08-18_01-30-06.jpg",
+                    "photo_9_2026-08-18_01-30-06.jpg",
+                    "photo_10_2026-08-18_01-30-06.jpg"
+                ]
+            },
+            {
+                id: 3,
+                name: "كرونيك ابيض",
+                category: "كرونيك ",
+                price: 690,
+                desc: "كرونيك ابيض ",
+                sizes: ["XXL", "XL", "L"],
+                stock: 9,
+                images: [
+                    "photo_13_2026-08-18_01-30-06.jpg",
+                    "photo_11_2026-08-18_01-30-06.jpg",
+                    "photo_12_2026-08-18_01-30-06.jpg",
+                    "photo_14_2026-08-18_01-30-06.jpg",
+                    "photo_15_2026-08-18_01-30-06.jpg"
+                ]
+            }
+        ];
+
+        // آراء العملاء - بتفضل فاضية لحد ما حد يعمل تقييم فعلي من خلال نموذج "شارك رأيك"
+        let testimonials = [];
+
+        let cart = [];
+        let currentProduct = null;
+        let selectedSize = null;
+        let scrollObserver = null;
+        let fbSelectedRating = 5;
+
+        // --- Theme Toggle ---
+        function toggleTheme() {
+            document.documentElement.classList.toggle('dark');
+        }
+
+        function scrollToCollection() {
+            const section = document.getElementById('collection-section');
+            if (section) {
+                section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        }
+
+        // --- Scroll reveal (IntersectionObserver-based) ---
+        function initScrollReveal(container) {
+            if (!('IntersectionObserver' in window)) {
+                // Fallback: just show everything
+                (container || document).querySelectorAll('.reveal-item').forEach(el => el.classList.add('revealed'));
+                return;
+            }
+            if (!scrollObserver) {
+                scrollObserver = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            entry.target.classList.add('revealed');
+                            scrollObserver.unobserve(entry.target);
+                        }
+                    });
+                }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+            }
+            const scope = container || document;
+            scope.querySelectorAll('.reveal-item:not(.revealed)').forEach(el => scrollObserver.observe(el));
+        }
+
+        // --- UI Navigation ---
+        function playViewTransition(viewEl) {
+            viewEl.classList.remove('view-transition');
+            // Force reflow so the animation restarts every time the view is shown
+            void viewEl.offsetWidth;
+            viewEl.classList.add('view-transition');
+        }
+
+        function showHome(e) {
+            if(e) e.preventDefault();
+            document.getElementById('product-view').classList.add('hidden-view');
+            document.getElementById('checkout-view').classList.add('hidden-view');
+            const homeView = document.getElementById('home-view');
+            homeView.classList.remove('hidden-view');
+            playViewTransition(homeView);
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            if (updateUrlSupported()) {
+                history.pushState({ view: 'home' }, '', window.location.pathname);
+            }
+        }
+
+        function updateUrlSupported() {
+            return window.history && typeof history.pushState === 'function' && window.location.protocol !== 'file:';
+        }
+
+        function showProduct(id, updateUrl = true) {
+            currentProduct = products.find(p => p.id === id);
+            selectedSize = null;
+            if(!currentProduct) return;
+
+            document.getElementById('pd-category').textContent = currentProduct.category;
+            document.getElementById('pd-title').textContent = currentProduct.name;
+            document.getElementById('pd-price').textContent = currentProduct.price + ' EGP';
+            document.getElementById('pd-desc').textContent = currentProduct.desc;
+            document.getElementById('size-error-msg').classList.add('hidden');
+            document.getElementById('pd-sticky-price').textContent = currentProduct.price + ' EGP';
+
+            const stockMsg = document.getElementById('pd-stock-msg');
+            if (typeof currentProduct.stock === 'number') {
+                if (currentProduct.stock <= 5) {
+                    stockMsg.textContent = `متبقي ${currentProduct.stock} قطع بس!`;
+                    stockMsg.className = 'font-arabic text-xs font-bold text-red-600 dark:text-red-400 mt-3';
+                } else {
+                    stockMsg.textContent = 'متوفر حالياً';
+                    stockMsg.className = 'font-arabic text-xs text-gray-500 mt-3';
+                }
+            } else {
+                stockMsg.textContent = '';
+            }
+
+            const sizesContainer = document.getElementById('pd-sizes');
+            sizesContainer.innerHTML = currentProduct.sizes.map(size => 
+                `<button onclick="selectSize('${size}', this)" class="btn-pop size-btn w-14 h-14 border border-gray-300 dark:border-gray-700 flex items-center justify-center font-display rounded-md hover:border-black dark:hover:border-white transition-colors text-lg">${size}</button>`
+            ).join('');
+
+            setMainImage(currentProduct.images[0], 0);
+            renderRelatedProducts(currentProduct.id);
+
+            document.getElementById('home-view').classList.add('hidden-view');
+            document.getElementById('checkout-view').classList.add('hidden-view');
+            const productView = document.getElementById('product-view');
+            productView.classList.remove('hidden-view');
+            playViewTransition(productView);
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+
+            if (updateUrl && updateUrlSupported()) {
+                const url = new URL(window.location.href);
+                url.searchParams.set('p', id);
+                history.pushState({ view: 'product', id }, '', url.toString());
+            }
+        }
+
+        // --- Share product link ---
+        function getProductShareUrl(product) {
+            const url = new URL(window.location.href);
+            url.search = '';
+            url.searchParams.set('p', product.id);
+            return url.toString();
+        }
+
+        function shareCurrentProduct() {
+            if (!currentProduct) return;
+            const shareUrl = getProductShareUrl(currentProduct);
+            const shareText = `${currentProduct.name} - ${currentProduct.price} EGP`;
+
+            if (navigator.share) {
+                navigator.share({
+                    title: 'HEXAM - ' + currentProduct.name,
+                    text: shareText,
+                    url: shareUrl
+                }).catch(() => { /* المستخدم لغى المشاركة، مفيش داعي لأي حاجة */ });
+                return;
+            }
+
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(shareUrl).then(() => {
+                    showCustomAlert('تم النسخ', 'تم نسخ رابط المنتج، تقدر تلصقه وتبعته لأي حد.', 'success');
+                }).catch(() => {
+                    showCustomAlert('الرابط', shareUrl, 'info');
+                });
+            } else {
+                showCustomAlert('الرابط', shareUrl, 'info');
+            }
+        }
+
+        // --- Related products ---
+        function renderRelatedProducts(currentId) {
+            const container = document.getElementById('related-products-grid');
+            const related = products.filter(p => p.id !== currentId);
+            container.innerHTML = related.map((p, index) => `
+                <div class="product-card reveal-item group cursor-pointer" style="transition-delay:${index * 90}ms" onclick="showProduct(${p.id})">
+                    <div class="card-image-wrap w-full aspect-[4/5] bg-gray-200 dark:bg-hexGray overflow-hidden rounded-md mb-4 relative shadow-lg">
+                        <img src="${p.images[0]}" class="bw-hover-effect w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" alt="${p.name}">
+                    </div>
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <p class="font-display tracking-widest text-[10px] text-gray-500 uppercase mb-1">${p.category}</p>
+                            <h3 class="font-display font-bold text-xl uppercase transition-colors group-hover:text-gray-500">${p.name}</h3>
+                        </div>
+                        <p class="font-arabic font-bold text-lg">${p.price} ج.م</p>
+                    </div>
+                </div>
+            `).join('');
+            initScrollReveal(container);
+        }
+
+        // --- Testimonials ---
+        function renderTestimonials() {
+            const grid = document.getElementById('testimonials-grid');
+            if (!grid) return;
+            if (testimonials.length === 0) {
+                grid.innerHTML = `<div class="sm:col-span-2 lg:col-span-3 text-center py-10 font-arabic text-gray-500 border border-dashed border-black/10 dark:border-white/10 rounded-xl">لسه مفيش آراء منشورة. كن أول من يشاركنا رأيه!</div>`;
+                return;
+            }
+            grid.innerHTML = testimonials.map((t, index) => `
+                <div class="reveal-item bg-gray-50 dark:bg-hexGray/60 border border-black/5 dark:border-white/5 rounded-xl p-6" style="transition-delay:${index * 90}ms">
+                    <div class="flex gap-1 mb-3 text-yellow-500">
+                        ${'★'.repeat(t.rating)}${'☆'.repeat(5 - t.rating)}
+                    </div>
+                    <p class="font-arabic text-sm text-gray-600 dark:text-gray-400 leading-relaxed mb-4">${t.text}</p>
+                    <p class="font-arabic font-bold text-sm">${t.name}</p>
+                </div>
+            `).join('');
+            initScrollReveal(grid);
+        }
+
+        // --- Feedback Modal ---
+        function renderFeedbackStars() {
+            const starsContainer = document.getElementById('fb-stars');
+            let html = '';
+            for (let i = 1; i <= 5; i++) {
+                html += `<button type="button" onclick="setFeedbackRating(${i})" class="btn-pop fb-star transition-colors ${i <= fbSelectedRating ? 'text-yellow-500' : 'text-gray-300 dark:text-gray-600'}">★</button>`;
+            }
+            starsContainer.innerHTML = html;
+        }
+
+        function setFeedbackRating(rating) {
+            fbSelectedRating = rating;
+            renderFeedbackStars();
+        }
+
+        function openFeedbackModal() {
+            fbSelectedRating = 5;
+            document.getElementById('feedback-form').reset();
+            renderFeedbackStars();
+            const modal = document.getElementById('feedback-modal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            setTimeout(() => {
+                modal.classList.remove('opacity-0');
+                modal.querySelector('div').classList.remove('scale-95');
+                modal.querySelector('div').classList.add('scale-100');
+            }, 10);
+        }
+
+        function closeFeedbackModal() {
+            const modal = document.getElementById('feedback-modal');
+            modal.classList.add('opacity-0');
+            modal.querySelector('div').classList.remove('scale-100');
+            modal.querySelector('div').classList.add('scale-95');
+            setTimeout(() => {
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+            }, 300);
+        }
+
+        function submitFeedback(e) {
+            e.preventDefault();
+            const nameInput = document.getElementById('fb-name').value.trim();
+            const text = document.getElementById('fb-text').value.trim();
+            if (!text) return;
+
+            const name = nameInput || 'عميل HEXAM';
+            testimonials = [{ name, rating: fbSelectedRating, text }, ...testimonials];
+            renderTestimonials();
+            closeFeedbackModal();
+
+            // بنبعت التقييم للبوت كمان عشان يوصل لصاحب المتجر
+            const botToken = "8811473515:AAE4GVLGiTGR5L_gSShXzJAPXFUyFWA5TwQ";
+            const chatId = "6702551429";
+            const feedbackMessage = `⭐ تقييم جديد من عميل\n\n👤 الاسم: ${name}\n⭐ التقييم: ${fbSelectedRating}/5\n💬 الرأي: ${text}`;
+            fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ chat_id: chatId, text: feedbackMessage })
+            }).catch(err => console.warn('Telegram feedback error:', err));
+
+            showCustomAlert('شكراً ليك!', 'تم إرسال رأيك بنجاح، بجد نقدر تفاعلك معانا.', 'success');
+        }
+
+        // --- Size Guide Modal ---
+        function openSizeGuide() {
+            const modal = document.getElementById('size-guide-modal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            setTimeout(() => {
+                modal.classList.remove('opacity-0');
+                modal.querySelector('div').classList.remove('scale-95');
+                modal.querySelector('div').classList.add('scale-100');
+            }, 10);
+        }
+
+        function closeSizeGuide() {
+            const modal = document.getElementById('size-guide-modal');
+            modal.classList.add('opacity-0');
+            modal.querySelector('div').classList.remove('scale-100');
+            modal.querySelector('div').classList.add('scale-95');
+            setTimeout(() => {
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+            }, 300);
+        }
+
+        // --- Image Lightbox ---
+        let lightboxIndex = 0;
+        function openLightbox() {
+            if (!currentProduct) return;
+            lightboxIndex = currentProduct.images.indexOf(document.getElementById('pd-main-img').src.split('/').pop());
+            if (lightboxIndex < 0) lightboxIndex = 0;
+            updateLightboxImage();
+            const overlay = document.getElementById('lightbox-overlay');
+            overlay.classList.remove('hidden');
+            overlay.classList.add('flex');
+            setTimeout(() => overlay.classList.remove('opacity-0'), 10);
+        }
+
+        function closeLightbox() {
+            const overlay = document.getElementById('lightbox-overlay');
+            overlay.classList.add('opacity-0');
+            setTimeout(() => {
+                overlay.classList.add('hidden');
+                overlay.classList.remove('flex');
+            }, 300);
+        }
+
+        function lightboxNav(delta) {
+            if (!currentProduct) return;
+            const imgs = currentProduct.images;
+            lightboxIndex = (lightboxIndex + delta + imgs.length) % imgs.length;
+            updateLightboxImage();
+        }
+
+        function updateLightboxImage() {
+            if (!currentProduct) return;
+            document.getElementById('lightbox-img').src = currentProduct.images[lightboxIndex];
+        }
+
+        document.addEventListener('keydown', (e) => {
+            const overlay = document.getElementById('lightbox-overlay');
+            if (overlay.classList.contains('hidden')) return;
+            if (e.key === 'Escape') closeLightbox();
+            if (e.key === 'ArrowRight') lightboxNav(1);
+            if (e.key === 'ArrowLeft') lightboxNav(-1);
+        });
+
+        function updateCheckoutTotal() {
+            const subtotal = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
+            document.getElementById('co-total').textContent = subtotal + ' ج.م';
+            return subtotal;
+        }
+
+        // --- Order tracking code ---
+        function generateOrderCode() {
+            return 'HEXAM-' + Math.random().toString(36).slice(2, 7).toUpperCase();
+        }
+
+        // --- Handle direct product links (?p=ID) and browser back/forward ---
+        function loadProductFromUrl() {
+            const params = new URLSearchParams(window.location.search);
+            const idParam = params.get('p');
+            if (!idParam) return false;
+            const id = parseInt(idParam, 10);
+            if (!Number.isFinite(id)) return false;
+            const exists = products.some(p => p.id === id);
+            if (!exists) return false;
+            showProduct(id, false);
+            return true;
+        }
+
+        window.addEventListener('popstate', () => {
+            const params = new URLSearchParams(window.location.search);
+            const idParam = params.get('p');
+            if (idParam) {
+                const id = parseInt(idParam, 10);
+                if (products.some(p => p.id === id)) {
+                    showProduct(id, false);
+                    return;
+                }
+            }
+            showHome();
+        });
+
+        function setMainImage(url, activeIndex) {
+            const mainImg = document.getElementById('pd-main-img');
+            mainImg.style.opacity = '0';
+            setTimeout(() => {
+                mainImg.src = url;
+                mainImg.style.opacity = '1';
+            }, 150);
+
+            const thumbsContainer = document.getElementById('pd-thumbnails');
+            let thumbnailsHTML = '';
+            currentProduct.images.forEach((imgUrl, index) => {
+                const isActive = imgUrl === url;
+                thumbnailsHTML += `
+                    <div onclick="setMainImage('${imgUrl}', ${index})" class="cursor-pointer aspect-square rounded-md overflow-hidden bg-gray-200 dark:bg-hexGray border-2 ${isActive ? 'border-black dark:border-white' : 'border-transparent'} transition-colors">
+                        <img src="${imgUrl}" class="thumb-bw ${isActive ? 'active-thumb' : ''} w-full h-full object-cover" alt="Thumb">
+                    </div>
+                `;
+            });
+            thumbsContainer.innerHTML = thumbnailsHTML;
+        }
+
+        function selectSize(size, btnElement) {
+            selectedSize = size;
+            document.getElementById('size-error-msg').classList.add('hidden');
+
+            document.querySelectorAll('.size-btn').forEach(btn => {
+                btn.classList.remove('bg-black', 'text-white', 'dark:bg-white', 'dark:text-black', 'border-black', 'dark:border-white', 'shadow-md', 'selected-pop');
+            });
+            btnElement.classList.add('bg-black', 'text-white', 'dark:bg-white', 'dark:text-black', 'border-black', 'dark:border-white', 'shadow-md', 'selected-pop');
+        }
+
+        // --- Render Products ---
+        function renderProducts() {
+            const grid = document.getElementById('products-grid');
+            grid.innerHTML = products.map((p, index) => `
+                <div class="product-card reveal-item group cursor-pointer" style="transition-delay:${index * 90}ms" onclick="showProduct(${p.id})">
+                    <div class="card-image-wrap w-full aspect-[4/5] bg-gray-200 dark:bg-hexGray overflow-hidden rounded-md mb-4 relative shadow-lg">
+                        <img src="${p.images[0]}" class="bw-hover-effect w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" alt="${p.name}">
+                    </div>
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <p class="font-display tracking-widest text-[10px] text-gray-500 uppercase mb-1">${p.category}</p>
+                            <h3 class="font-display font-bold text-xl uppercase transition-colors group-hover:text-gray-500">${p.name}</h3>
+                        </div>
+                        <p class="font-arabic font-bold text-lg">${p.price} ج.م</p>
+                    </div>
+                </div>
+            `).join('');
+            initScrollReveal();
+        }
+
+        // --- Cart Logic ---
+        function toggleCart() {
+            const sidebar = document.getElementById('cart-sidebar');
+            const overlay = document.getElementById('cart-overlay');
+            
+            if(sidebar.classList.contains('cart-open')) {
+                sidebar.classList.remove('cart-open');
+                overlay.classList.add('opacity-0', 'pointer-events-none');
+            } else {
+                sidebar.classList.add('cart-open');
+                overlay.classList.remove('opacity-0', 'pointer-events-none');
+            }
+        }
+
+        function addToCartFromDetail() {
+            if(!selectedSize) {
+                const errorMsg = document.getElementById('size-error-msg');
+                errorMsg.classList.remove('hidden');
+                document.getElementById('size-selection-area').scrollIntoView({ behavior: 'smooth', block: 'center' });
+                return;
+            }
+            
+            const existingItem = cart.find(item => item.id === currentProduct.id && item.size === selectedSize);
+            if(existingItem) {
+                existingItem.qty += 1;
+            } else {
+                cart.push({
+                    id: currentProduct.id,
+                    name: currentProduct.name,
+                    price: currentProduct.price,
+                    image: currentProduct.images[0],
+                    size: selectedSize,
+                    qty: 1
+                });
+            }
+            
+            updateCartUI();
+            
+            const badge = document.getElementById('cart-badge');
+            badge.classList.add('scale-150');
+            setTimeout(() => badge.classList.remove('scale-150'), 300);
+
+            toggleCart(); 
+        }
+
+        function buyNowFromDetail() {
+             if(!selectedSize) {
+                const errorMsg = document.getElementById('size-error-msg');
+                errorMsg.classList.remove('hidden');
+                document.getElementById('size-selection-area').scrollIntoView({ behavior: 'smooth', block: 'center' });
+                return;
+            }
+            cart = [{
+                id: currentProduct.id,
+                name: currentProduct.name,
+                price: currentProduct.price,
+                image: currentProduct.images[0],
+                size: selectedSize,
+                qty: 1
+            }];
+            updateCartUI();
+            goToCheckout();
+        }
+
+        function updateQty(index, delta) {
+            if (cart[index].qty + delta > 0) {
+                cart[index].qty += delta;
+            } else {
+                cart.splice(index, 1);
+            }
+            updateCartUI();
+        }
+
+        function removeFromCart(index) {
+            cart.splice(index, 1);
+            updateCartUI();
+        }
+
+        function updateCartUI() {
+            const container = document.getElementById('cart-items-container');
+            const badge = document.getElementById('cart-badge');
+            const totalEl = document.getElementById('cart-total-price');
+            
+            badge.textContent = cart.reduce((sum, item) => sum + item.qty, 0);
+            
+            if(cart.length === 0) {
+                container.innerHTML = `<div class="flex-grow flex flex-col items-center justify-center text-gray-400"><svg class="w-12 h-12 mb-3 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg><p class="font-arabic">السلة فارغة</p></div>`;
+                totalEl.textContent = '0 EGP';
+                return;
+            }
+
+            let total = 0;
+            container.innerHTML = cart.map((item, index) => {
+                total += item.price * item.qty;
+                return `
+                <div class="cart-item-enter flex gap-4 items-center bg-gray-50 dark:bg-hexGray/50 p-3 rounded-md shadow-sm border border-black/5 dark:border-white/5" style="animation-delay:${index * 60}ms">
+                    <img src="${item.image}" class="w-16 h-20 object-cover rounded" alt="Item">
+                    <div class="flex-grow">
+                        <h4 class="font-display font-bold uppercase text-sm">${item.name}</h4>
+                        <p class="font-arabic text-xs text-gray-500 mb-2">المقاس: <span class="font-bold text-black dark:text-white">${item.size}</span></p>
+                        <div class="flex items-center gap-3">
+                            <button onclick="updateQty(${index}, -1)" class="w-6 h-6 flex items-center justify-center bg-gray-200 dark:bg-gray-700 rounded-full hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors font-bold">-</button>
+                            <span class="font-bold text-sm w-4 text-center">${item.qty}</span>
+                            <button onclick="updateQty(${index}, 1)" class="w-6 h-6 flex items-center justify-center bg-black text-white dark:bg-white dark:text-black rounded-full hover:opacity-80 transition-opacity font-bold">+</button>
+                        </div>
+                    </div>
+                    <div class="flex flex-col items-end gap-2">
+                        <button onclick="removeFromCart(${index})" class="text-red-500 p-1 hover:bg-red-50 dark:hover:bg-red-900/20 rounded transition-colors" aria-label="حذف">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                        </button>
+                        <p class="font-arabic font-bold text-sm">${item.price * item.qty} ج.م</p>
+                    </div>
+                </div>
+                `;
+            }).join('');
+            
+            totalEl.textContent = total + ' EGP';
+        }
+
+        // --- Checkout & Telegram Integration ---
+        function goToCheckout() {
+            if(cart.length === 0) {
+                showCustomAlert('تنبيه', 'السلة فارغة، أضف منتجات أولاً للمتابعة.', 'warning');
+                return;
+            }
+            
+            const sidebar = document.getElementById('cart-sidebar');
+            if(sidebar.classList.contains('cart-open')) toggleCart();
+
+            updateCheckoutTotal();
+
+            document.getElementById('home-view').classList.add('hidden-view');
+            document.getElementById('product-view').classList.add('hidden-view');
+            const checkoutView = document.getElementById('checkout-view');
+            checkoutView.classList.remove('hidden-view');
+            playViewTransition(checkoutView);
+            window.scrollTo(0,0);
+        }
+
+        // يسمح بحروف عربي ومسافات فقط للاسم (زي ما مطلوب: "عربي فقط")
+        function isArabicNameOnly(value) {
+            return /^[\u0600-\u06FF\s]+$/.test(value);
+        }
+
+        // يسمح بحروف عربي وأرقام وعلامات ترقيم بسيطة للعنوان (محتاج أرقام لعنوان الشارع)، من غير حروف إنجليزي
+        function isArabicAddress(value) {
+            return /^[\u0600-\u06FF0-9\s,.\-\/]+$/.test(value);
+        }
+
+        function processOrder(e) {
+            e.preventDefault();
+            const name = document.getElementById('co-name').value.trim();
+            const phone = document.getElementById('co-phone').value.trim();
+            const phone2 = document.getElementById('co-phone-2').value.trim();
+            const address = document.getElementById('co-address').value.trim();
+            const note = document.getElementById('co-note').value.trim();
+
+            if(!name || !phone || !address) {
+                showCustomAlert('خطأ', 'برجاء إكمال جميع البيانات الأساسية المطلوبة.', 'error');
+                return;
+            }
+
+            if(!isArabicNameOnly(name)) {
+                showCustomAlert('اسم غير صحيح', 'الاسم يجب أن يكتب بحروف عربية فقط بدون أرقام أو حروف إنجليزية أو رموز.', 'error');
+                return;
+            }
+
+            if(!isArabicAddress(address)) {
+                showCustomAlert('عنوان غير صحيح', 'العنوان يجب أن يكتب بحروف عربية فقط (ممكن تستخدم أرقام للشارع أو الدور).', 'error');
+                return;
+            }
+
+            const phoneRegex = /^01[0125][0-9]{8}$/;
+            if(!phoneRegex.test(phone)) {
+                showCustomAlert('رقم غير صحيح', 'رقم الهاتف الأساسي يجب أن يتكون من 11 رقم ويبدأ بـ (010, 011, 012, 015).', 'error');
+                return;
+            }
+
+            if(phone2 && !phoneRegex.test(phone2)) {
+                showCustomAlert('رقم غير صحيح', 'رقم الهاتف الإضافي غير صحيح، تأكد من أنه 11 رقم ويبدأ بـ (010, 011, 012, 015).', 'error');
+                return;
+            }
+
+            let totalAmount = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
+            let orderCode = generateOrderCode();
+
+            let itemsDetails = cart.map((item, idx) => 
+                `▫️ القطعة (${idx + 1}): ${item.name}\n   - المقاس: ${item.size}\n   - العدد: ${item.qty}\n   - السعر: ${item.price * item.qty} ج.م`
+            ).join('\n\n');
+
+            let telegramMessage = `🛍️ طلب جديد عبر متجر HEXAM 🛍️\n\n` +
+                `🔖 كود الطلب: ${orderCode}\n\n` +
+                `👤 بيانات العميل:\n` +
+                `• الاسم: ${name}\n` +
+                `• الهاتف الأساسي: ${phone}\n` +
+                (phone2 ? `• الهاتف الإضافي: ${phone2}\n` : ``) +
+                `• العنوان: ${address}\n` +
+                (note ? `• ملاحظة: ${note}\n` : ``) +
+                `\n📦 المنتجات:\n${itemsDetails}\n\n` +
+                `💰 الإجمالي الكلي: ${totalAmount} ج.م\n` +
+                `🚚 الدفع: عند الاستلام`;
+
+            // Telegram Token & Chat ID (Bot: Elnahas_store_bot)
+            const botToken = "8811473515:AAE4GVLGiTGR5L_gSShXzJAPXFUyFWA5TwQ";
+            const chatId = "6702551429";
+
+            const submitBtn = document.getElementById('co-submit-btn');
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'جاري إرسال الطلب...';
+
+            fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    chat_id: chatId,
+                    text: telegramMessage
+                })
+            })
+            .then(res => res.json())
+            .then(data => {
+                console.log('Telegram Response:', data);
+                if(!data.ok) {
+                    console.warn('Telegram send failed:', data.description);
+                }
+            })
+            .catch(err => console.warn('Telegram network error:', err))
+            .finally(() => {
+                submitBtn.disabled = false;
+                submitBtn.textContent =   'تأكيد الطلب ';
+
+                cart = [];
+                updateCartUI();
+                document.getElementById('checkout-form').reset();
+                showHome();
+
+                showOrderSuccessModal(orderCode);
+            });
+        }
+
+        // --- Order success + optional WhatsApp + optional feedback prompt ---
+        function showOrderSuccessModal(orderCode) {
+            const modal = document.getElementById('custom-modal');
+            const iconContainer = document.getElementById('modal-icon');
+
+            document.getElementById('modal-title').textContent = 'تم الطلب بنجاح!';
+            document.getElementById('modal-msg').innerHTML = `كود طلبك: <b>${orderCode}</b><br>هنتواصل معاك في أقرب وقت.`;
+            iconContainer.innerHTML = `<svg class="w-8 h-8 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>`;
+            iconContainer.classList.remove('icon-pop');
+            void iconContainer.offsetWidth;
+            iconContainer.classList.add('icon-pop');
+
+            const modalBox = modal.querySelector('div');
+            // بنضيف اختيارين اختياريين تحت رسالة النجاح: واتساب وتقييم، من غير ما نفتح حاجة تلقائي
+            let extraActions = document.getElementById('modal-extra-actions');
+            if (!extraActions) {
+                extraActions = document.createElement('div');
+                extraActions.id = 'modal-extra-actions';
+                extraActions.className = 'flex flex-col gap-3 mb-4';
+                modalBox.insertBefore(extraActions, modalBox.querySelector('button'));
+            }
+            const whatsappText = encodeURIComponent(`مرحباً، تم تأكيد طلبي من متجر HEXAM ✅\nكود الطلب: ${orderCode}`);
+            extraActions.innerHTML = `
+                <a href="https://wa.me/201152656351?text=${whatsappText}" target="_blank" rel="noopener noreferrer" class="btn-pop w-full border-2 border-black dark:border-white text-black dark:text-white font-arabic font-bold py-3 rounded-md hover:bg-black hover:text-white dark:hover:bg-white dark:hover:text-black transition-colors text-sm">تواصل معنا على واتساب (اختياري)</a>
+                <button type="button" onclick="closeModal(); openFeedbackModal();" class="btn-pop w-full text-sm font-arabic font-semibold underline text-gray-500 hover:text-black dark:hover:text-white transition-colors py-1">شاركنا رأيك (اختياري)</button>
+            `;
+
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            setTimeout(() => {
+                modal.classList.remove('opacity-0');
+                modalBox.classList.remove('scale-95');
+                modalBox.classList.add('scale-100');
+            }, 10);
+        }
+
+        // --- Custom Alert/Modal ---
+        function showCustomAlert(title, message, type = 'info') {
+            const modal = document.getElementById('custom-modal');
+            const iconContainer = document.getElementById('modal-icon');
+
+            // بنشيل أي أزرار إضافية كانت موجودة من مودال النجاح السابق
+            const extraActions = document.getElementById('modal-extra-actions');
+            if (extraActions) extraActions.remove();
+
+            document.getElementById('modal-title').textContent = title;
+            document.getElementById('modal-msg').textContent = message;
+
+            if(type === 'success') {
+                iconContainer.innerHTML = `<svg class="w-8 h-8 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>`;
+            } else if (type === 'warning') {
+                iconContainer.innerHTML = `<svg class="w-8 h-8 text-yellow-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>`;
+            } else if (type === 'error') {
+                iconContainer.innerHTML = `<svg class="w-8 h-8 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>`;
+            } else {
+                iconContainer.innerHTML = `<svg class="w-8 h-8 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>`;
+            }
+
+            iconContainer.classList.remove('icon-pop');
+            void iconContainer.offsetWidth;
+            iconContainer.classList.add('icon-pop');
+
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            setTimeout(() => {
+                modal.classList.remove('opacity-0');
+                modal.querySelector('div').classList.remove('scale-95');
+                modal.querySelector('div').classList.add('scale-100');
+            }, 10);
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('custom-modal');
+            modal.classList.add('opacity-0');
+            modal.querySelector('div').classList.remove('scale-100');
+            modal.querySelector('div').classList.add('scale-95');
+            setTimeout(() => {
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+                const extraActions = document.getElementById('modal-extra-actions');
+                if (extraActions) extraActions.remove();
+            }, 300);
+        }
+
+        // --- Init ---
+        window.onload = () => {
+            renderProducts();
+            renderTestimonials();
+            updateCartUI();
+            // لو اللينك فيه رقم منتج (؟p=1) هيفتح صفحة المنتج ده على طول بدل الصفحة الرئيسية
+            loadProductFromUrl();
+        };
+    </script>
+</body>
+</html>
