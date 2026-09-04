@@ -665,17 +665,8 @@
             document.getElementById('pd-sticky-price').textContent = currentProduct.price + ' EGP';
 
             const stockMsg = document.getElementById('pd-stock-msg');
-            if (typeof currentProduct.stock === 'number') {
-                if (currentProduct.stock <= 5) {
-                    stockMsg.textContent = `متبقي ${currentProduct.stock} قطع بس!`;
-                    stockMsg.className = 'font-arabic text-xs font-bold text-red-600 dark:text-red-400 mt-3';
-                } else {
-                    stockMsg.textContent = 'متوفر حالياً';
-                    stockMsg.className = 'font-arabic text-xs text-gray-500 mt-3';
-                }
-            } else {
-                stockMsg.textContent = '';
-            }
+            stockMsg.textContent = 'متوفر حالياً';
+            stockMsg.className = 'font-arabic text-xs text-gray-500 dark:text-gray-400 mt-3';
 
             const sizesContainer = document.getElementById('pd-sizes');
             sizesContainer.innerHTML = currentProduct.sizes.map(size => 
@@ -825,14 +816,7 @@
             closeFeedbackModal();
 
             // بنبعت التقييم للبوت الجديد كمان عشان يوصل لصاحب المتجر
-            const botToken = "8936325661:AAFx3T_PXWZFHWGp94YQgFtIPf2XiMb-Eq0";
-            const chatId = "8841366321";
-            const feedbackMessage = `⭐ تقييم جديد من عميل\n\n👤 الاسم: ${name}\n⭐ التقييم: ${fbSelectedRating}/5\n💬 الرأي: ${text}`;
-            fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ chat_id: chatId, text: feedbackMessage })
-            }).catch(err => console.warn('Telegram feedback error:', err));
+            sendTelegramMessage(`⭐ تقييم جديد من عميل\n\n👤 الاسم: ${name}\n⭐ التقييم: ${fbSelectedRating}/5\n💬 الرأي: ${text}`);
 
             showCustomAlert('شكراً ليك!', 'تم إرسال رأيك بنجاح، بجد نقدر تفاعلك معانا.', 'success');
         }
@@ -1109,6 +1093,22 @@
             totalEl.textContent = total + ' EGP';
         }
 
+        // --- Telegram helper (send via same-origin proxy, no token in the browser) ---
+        function sendTelegramMessage(text) {
+            fetch('/api/notify', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ text })
+            })
+            .then(res => res.json().catch(() => ({})))
+            .then(data => {
+                if (data && data.ok === false) {
+                    console.warn('Notify proxy error:', data.description || data);
+                }
+            })
+            .catch(err => console.warn('Notify network error:', err));
+        }
+
         // --- Checkout & Telegram Integration ---
         function goToCheckout() {
             if(cart.length === 0) {
@@ -1192,41 +1192,21 @@
                 `💰 الإجمالي الكلي: ${totalAmount} ج.م\n` +
                 `🚚 الدفع: عند الاستلام`;
 
-            // Telegram Token & Chat ID (Bot: hexam_store_2026_bot)
-            const botToken = "8936325661:AAFx3T_PXWZFHWGp94YQgFtIPf2XiMb-Eq0";
-            const chatId = "8841366321";
-
             const submitBtn = document.getElementById('co-submit-btn');
             submitBtn.disabled = true;
             submitBtn.textContent = 'جاري إرسال الطلب...';
 
-            fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    chat_id: chatId,
-                    text: telegramMessage
-                })
-            })
-            .then(res => res.json())
-            .then(data => {
-                console.log('Telegram Response:', data);
-                if(!data.ok) {
-                    console.warn('Telegram send failed:', data.description);
-                }
-            })
-            .catch(err => console.warn('Telegram network error:', err))
-            .finally(() => {
-                submitBtn.disabled = false;
-                submitBtn.textContent =   'تأكيد الطلب ';
+            sendTelegramMessage(telegramMessage);
 
-                cart = [];
-                updateCartUI();
-                document.getElementById('checkout-form').reset();
-                showHome();
+            submitBtn.disabled = false;
+            submitBtn.textContent =   'تأكيد الطلب ';
 
-                showOrderSuccessModal(orderCode);
-          });
+            cart = [];
+            updateCartUI();
+            document.getElementById('checkout-form').reset();
+            showHome();
+
+            showOrderSuccessModal(orderCode);
       }
 
       // --- Order success + optional WhatsApp + optional feedback prompt ---
