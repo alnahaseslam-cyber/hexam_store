@@ -33,8 +33,13 @@ td{padding:10px;border-bottom:1px solid #1d1d1d;vertical-align:middle}tr.row{cur
 tr.det td{background:#101010;font-size:13.5px}.dg{display:grid;gap:6px}.dg i{font-style:normal;color:var(--mut)}.it{display:flex;justify-content:space-between;gap:10px;padding:3px 0}
 .ac{display:flex;gap:6px;flex-wrap:wrap;align-items:center}.ac select{width:auto;padding:6px 10px;font-size:14px}.empty{text-align:center;color:var(--mut);padding:40px}
 a{color:var(--tx)}.toast{position:fixed;bottom:calc(20px + env(safe-area-inset-bottom));left:50%;transform:translateX(-50%);background:#fff;color:#000;padding:10px 18px;border-radius:99px;font-weight:700;font-size:14px;z-index:9}
-@media(max-width:820px){thead{display:none}table,tbody,tr,td{display:block;width:100%}tr.row{border:1px solid var(--line);border-radius:12px;margin-bottom:10px;padding:6px 0;background:var(--card)}
-tr.row td{border:0;padding:5px 12px;display:flex;justify-content:space-between;gap:10px}tr.row td:before{content:attr(data-l);color:var(--mut);font-size:12px}tr.det{margin:-6px 0 10px}tr.det td{border-radius:0 0 12px 12px}.panel table.pt thead{display:table-header-group}.panel table.pt{display:table}.panel table.pt tbody{display:table-row-group}.panel table.pt tr{display:table-row}.panel table.pt td{display:table-cell}}
+
+/* Invoice Print Styles */
+@media print {
+  body * { visibility: hidden; }
+  #invoice-print-area, #invoice-print-area * { visibility: visible; }
+  #invoice-print-area { position: absolute; left: 0; top: 0; width: 100%; background: #fff !important; color: #000 !important; padding: 20px; }
+}
 </style></head><body>
 <section id="login">
  <form class="lbox" id="lf"><h1>HEXAM</h1><p>لوحة التحكم</p>
@@ -53,6 +58,10 @@ tr.row td{border:0;padding:5px 12px;display:flex;justify-content:space-between;g
  <div class="chips" id="chips"></div>
  <div class="panel" style="padding:6px;background:transparent;border:0"><table id="tb"></table></div>
 </div></section>
+
+<!-- Invoice Hidden Container for Printing -->
+<div id="invoice-print-area" hidden></div>
+
 <script>addEventListener('error',e=>{const l=document.getElementById('le');if(l)l.textContent='خطأ في تحميل الصفحة: '+(e.message||'ملف ناقص أو قديم')});</script>
 <script type="module">
 const $=s=>document.querySelector(s);
@@ -104,12 +113,11 @@ function render(){stats();
   const act=st==='new'?`<button class="btn ok s" data-a="acc">قبول</button><button class="btn bad s" data-a="rej">رفض</button>`:`<select data-s>${Object.entries(ST).filter(([k])=>k!=='new').map(([k,v])=>`<option value="${k}"${k===st?' selected':''}>${v}</option>`).join('')}</select>`;
   let h=`<tr class="row ${st==='new'?'new':''}" data-id="${o.id}"><td data-l="الكود"><b>${esc(o.code)}</b></td><td data-l="الوقت">${ft(o.date)}</td><td data-l="العميل">${esc(o.name)}</td><td data-l="الموبايل" dir="ltr">${ph}</td><td data-l="القطع">${pcs(o)}</td><td data-l="الإجمالي"><b>${money(o.total)}</b></td><td data-l="الحالة"><span class="badge s-${st}">${ST[st]}</span></td><td data-l="إجراء"><div class="ac">${act}</div></td></tr>`;
   if(open.has(o.id))h+=`<tr class="det" data-id="${o.id}"><td colspan="8"><div class="dg"><div><i>العنوان: </i>${esc(o.address)}</div>${o.phone2?`<div><i>موبايل إضافي: </i><span dir="ltr">${esc(o.phone2)}</span></div>`:''}${o.note?`<div><i>ملاحظة: </i>${esc(o.note)}</div>`:''}
-   <div>${(o.items||[]).map(i=>`<div class="it"><span>${esc(i.name)} · ${esc(i.size)} × ${esc(i.qty)}</span><span>${money(i.price*i.qty)}</span></div>`).join('')}</div>
+   <div><b>تفاصيل المنتجات والقطع المطلوبة:</b> ${(o.items||[]).map(i=>`<div class="it"><span>${esc(i.name)} · المقاس: ${esc(i.size)} × ${esc(i.qty)} قطع</span><span>${money(i.price*i.qty)}</span></div>`).join('')}</div>
    ${o.acceptedBy?`<div><i>اتقبل بواسطة: </i>${esc(o.acceptedBy)}</div>`:''}
-   <div class="ac"><a class="btn g s" href="tel:${ph}">اتصال</a><a class="btn g s" target="_blank" rel="noopener" href="https://wa.me/2${ph}">واتساب</a><button class="btn g s" data-a="copy">نسخ</button><button class="btn bad s" data-a="del">حذف</button></div></div></td></tr>`;
+   <div class="ac"><a class="btn g s" href="tel:${ph}">اتصال</a><a class="btn g s" target="_blank" rel="noopener" href="https://wa.me/2${ph}">واتساب</a><button class="btn g s" data-a="print">🖨️ طباعة فاتورة</button><button class="btn g s" data-a="copy">نسخ</button><button class="btn bad s" data-a="del">حذف</button></div></div></td></tr>`;
   return h}).join(''):'<tr><td colspan="8" class="empty">مفيش طلبات هنا</td></tr>')+'</tbody>'}
-['#q','#per','#sort'].forEach(s=>$(s).addEventListener('input',render));
-$('#chips').addEventListener('click',e=>{const b=e.target.closest('[data-f]');if(b){filter=b.dataset.f;render()}});
+['#q','#per','#sort'].forEach(s=>$(s).addEventListener('input',render));$('#chips').addEventListener('click',e=>{const b=e.target.closest('[data-f]');if(b){filter=b.dataset.f;render()}});
 const upd=async(id,d)=>{try{const r=await api('/api/orders',{method:'PATCH',body:JSON.stringify({id,...d})});orders=orders.map(x=>x.id===id?{...x,...r.order}:x);render();toast('تم')}catch{toast('فشل التنفيذ')}};
 $('#tb').addEventListener('change',e=>{if(e.target.matches('[data-s]'))upd(e.target.closest('[data-id]').dataset.id,{status:e.target.value})});
 $('#tb').addEventListener('click',async e=>{const tr=e.target.closest('[data-id]');if(!tr)return;const id=tr.dataset.id,o=orders.find(x=>x.id===id),a=e.target.closest('[data-a]')?.dataset.a;
@@ -117,6 +125,38 @@ $('#tb').addEventListener('click',async e=>{const tr=e.target.closest('[data-id]
  if(a==='acc')upd(id,{status:'confirmed'});
  if(a==='rej'&&confirm('رفض الطلب ده؟'))upd(id,{status:'cancelled'});
  if(a==='del'&&confirm('حذف الطلب نهائيًا؟'))try{await api('/api/orders?id='+encodeURIComponent(id),{method:'DELETE'});orders=orders.filter(x=>x.id!==id);render();toast('اتحذف')}catch{toast('فشل الحذف')}
+ if(a==='print'){
+  const printArea=$('#invoice-print-area');
+  printArea.innerHTML=`
+   <div style="font-family:'Cairo',sans-serif;direction:rtl;padding:20px;max-width:800px;margin:auto;">
+    <div style="display:flex;justify-content:space-between;border-bottom:2px solid #000;padding-bottom:15px;margin-bottom:20px;">
+     <div><h1 style="margin:0;font-size:24px;">HEXAM STORE</h1><p style="margin:4px 0 0;font-size:13px;color:#555;">فاتورة طلب عميل (الدفع عند الاستلام)</p></div>
+     <div style="text-align:left;"><b>كود الطلب:</b> ${esc(o.code)}<br><span style="font-size:12px;color:#555;">${ft(o.date)}</span></div>
+    </div>
+    <div style="margin-bottom:20px;background:#f9f9f9;padding:12px;border-radius:8px;">
+     <h3 style="margin:0 0 8px;font-size:15px;border-bottom:1px solid #ddd;padding-bottom:4px;">بيانات العميل:</h3>
+     <p style="margin:4px 0;"><b>اسم العميل:</b> ${esc(o.name)}</p>
+     <p style="margin:4px 0;"><b>رقم الموبايل:</b> <span dir="ltr">${esc(o.phone)}</span> ${o.phone2?` / <span dir="ltr">${esc(o.phone2)}</span>`:''}</p>
+     <p style="margin:4px 0;"><b>عنوان الشحن:</b> ${esc(o.address)}</p>
+     ${o.note?`<p style="margin:4px 0;"><b>ملاحظات:</b> ${esc(o.note)}</p>`:''}
+    </div>
+    <table style="width:100%;border-collapse:collapse;margin-bottom:20px;font-size:14px;">
+     <thead><tr style="background:#eee;"><th style="border:1px solid #ccc;padding:8px;text-align:right;">المنتج</th><th style="border:1px solid #ccc;padding:8px;text-align:center;">المقاس</th><th style="border:1px solid #ccc;padding:8px;text-align:center;">العدد</th><th style="border:1px solid #ccc;padding:8px;text-align:left;">السعر الإجمالي</th></tr></thead>
+     <tbody>
+      ${(o.items||[]).map(i=>`<tr><td style="border:1px solid #ccc;padding:8px;">${esc(i.name)}</td><td style="border:1px solid #ccc;padding:8px;text-align:center;"><b>${esc(i.size)}</b></td><td style="border:1px solid #ccc;padding:8px;text-align:center;">${i.qty}</td><td style="border:1px solid #ccc;padding:8px;text-align:left;">${money(i.price*i.qty)}</td></tr>`).join('')}
+     </tbody>
+    </table>
+    <div style="display:flex;justify-content:space-between;align-items:center;border-top:2px solid #000;padding-top:10px;">
+     <div><b>إجمالي القطع:</b> ${pcs(o)} قطعة</div>
+     <div style="font-size:18px;"><b>الإجمالي الكلي: ${money(o.total)}</b></div>
+    </div>
+    <div style="margin-top:40px;text-align:center;font-size:12px;color:#777;border-top:1px dashed #ccc;padding-top:10px;">
+     شكراً لتسوقك معنا - HEXAM
+    </div>
+   </div>
+  `;
+  window.print();
+ }
  if(a==='copy'){const t=`طلب ${o.code}\nالاسم: ${o.name}\nالموبايل: ${o.phone}${o.phone2?' / '+o.phone2:''}\nالعنوان: ${o.address}\n`+(o.items||[]).map(i=>`- ${i.name} | ${i.size} | ${i.qty} × ${i.price}`).join('\n')+`\nالإجمالي: ${o.total} ج.م`+(o.note?`\nملاحظة: ${o.note}`:'');
   try{await navigator.clipboard.writeText(t);toast('اتنسخ')}catch{toast('المتصفح منع النسخ')}}});
 $('#snd').onclick=()=>{sound=!sound;$('#snd').textContent=sound?'التنبيه: شغال':'التنبيه: مكتوم'};
