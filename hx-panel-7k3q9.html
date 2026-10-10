@@ -2,7 +2,7 @@
 <html lang="ar" dir="rtl"><head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="robots" content="noindex,nofollow,noarchive,nosnippet"><meta name="referrer" content="no-referrer">
-<title>HEXAM Panel</title>
+<title>HEXAM Panel - لوحة التحكم</title>
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
 <style>
 :root{--bg:#0a0a0a;--card:#151515;--line:#262626;--tx:#f5f5f5;--mut:#8a8a8a;--ok:#22c55e;--warn:#f59e0b;--bad:#ef4444;--info:#3b82f6}
@@ -11,156 +11,20 @@ html,body{background:var(--bg);color:var(--tx);font-family:'Cairo',sans-serif;-w
 body{min-height:100vh;padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom)}
 button,input,select{font-family:inherit;font-size:16px;color:var(--tx)}
 input,select{background:#0f0f0f;border:1px solid var(--line);border-radius:10px;padding:10px 14px;width:100%;outline:none}
-.btn{background:#fff;color:#000;border:0;border-radius:9px;padding:10px 18px;font-weight:700;cursor:pointer}
+.btn{background:#fff;color:#000;border:0;border-radius:9px;padding:10px 18px;font-weight:700;cursor:pointer;white-space:nowrap}
 .btn.g{background:transparent;color:var(--tx);border:1px solid var(--line)}.btn.ok{background:var(--ok);color:#04210e}
 .btn.bad{background:transparent;color:var(--bad);border:1px solid #4a1d1d}.btn.s{padding:6px 12px;font-size:13px}.btn:disabled{opacity:.4}
 #login{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
 .lbox{width:100%;max-width:380px;background:var(--card);border:1px solid var(--line);border-radius:18px;padding:30px}
 .lbox h1{font-size:26px;letter-spacing:.2em;text-align:center}.lbox p{color:var(--mut);text-align:center;font-size:13px;margin:4px 0 20px}
 .lbox label{display:block;font-size:13px;margin:12px 0 6px;color:var(--mut)}.err{color:var(--bad);font-size:13px;margin-top:12px;text-align:center;min-height:18px}
-.wrap{max-width:1320px;margin:0 auto;padding:16px}.top{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:6px 0 16px}
+.wrap{max-width:1320px;margin:0 auto;padding:16px}.top{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:6px 0 16px;flex-wrap:wrap}
 .top h2{font-size:20px;letter-spacing:.15em}.top .r{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.me{font-size:12px;color:var(--mut)}
 .stats{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-bottom:16px}@media(min-width:900px){.stats{grid-template-columns:repeat(4,1fr)}}
 .st{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px}.st small{color:var(--mut);font-size:12px}
 .st b{display:block;font-size:24px;margin:4px 0}.st span{font-size:12.5px;color:var(--mut)}.st.p{border-color:#7a5a12}.st.p b{color:var(--warn)}.st.ok b{color:var(--ok)}
 .panel{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px;margin-bottom:16px;overflow-x:auto}.panel h3{font-size:15px;margin-bottom:8px}
-table{width:100%;border-collapse:collapse;font-size:14px}th{color:var(--mut);font-weight:600;text-align:right;padding:10px;border-bottom:1px solid var(--line);font-size:12.5px;white-space:nowrap}
+table{width:100%;border-collapse:collapse;font-size:14px;min-width:700px}th{color:var(--mut);font-weight:600;text-align:right;padding:10px;border-bottom:1px solid var(--line);font-size:12.5px;white-space:nowrap}
 td{padding:10px;border-bottom:1px solid #1d1d1d;vertical-align:middle}tr.row{cursor:pointer}tr.row:hover td{background:#1a1a1a}tr.new td{background:#1d1708}
 .bar{display:grid;grid-template-columns:1fr;gap:10px;margin-bottom:12px}@media(min-width:760px){.bar{grid-template-columns:2fr 1fr 1fr auto}}
-.chips{display:flex;gap:8px;overflow-x:auto;padding-bottom:6px;margin-bottom:12px}.chip{white-space:nowrap;background:var(--card);border:1px solid var(--line);border-radius:99px;padding:6px 14px;font-size:13px;cursor:pointer}
-.chip.on{background:#fff;color:#000;border-color:#fff;font-weight:700}.badge{font-size:12px;padding:3px 10px;border-radius:99px;font-weight:700;white-space:nowrap}
-.s-new{background:#f59e0b22;color:var(--warn)}.s-confirmed{background:#22c55e22;color:var(--ok)}.s-shipped{background:#a855f722;color:#c084fc}.s-delivered{background:#3b82f622;color:var(--info)}.s-cancelled{background:#ef444422;color:var(--bad)}
-tr.det td{background:#101010;font-size:13.5px}.dg{display:grid;gap:6px}.dg i{font-style:normal;color:var(--mut)}.it{display:flex;justify-content:space-between;gap:10px;padding:3px 0}
-.ac{display:flex;gap:6px;flex-wrap:wrap;align-items:center}.ac select{width:auto;padding:6px 10px;font-size:14px}.empty{text-align:center;color:var(--mut);padding:40px}
-a{color:var(--tx)}.toast{position:fixed;bottom:calc(20px + env(safe-area-inset-bottom));left:50%;transform:translateX(-50%);background:#fff;color:#000;padding:10px 18px;border-radius:99px;font-weight:700;font-size:14px;z-index:9}
-
-/* Invoice Print Styles */
-@media print {
-  body * { visibility: hidden; }
-  #invoice-print-area, #invoice-print-area * { visibility: visible; }
-  #invoice-print-area { position: absolute; left: 0; top: 0; width: 100%; background: #fff !important; color: #000 !important; padding: 20px; }
-}
-</style></head><body>
-<section id="login">
- <form class="lbox" id="lf"><h1>HEXAM</h1><p>لوحة التحكم</p>
-  <label for="u">اسم المستخدم</label><input id="u" autocomplete="username" dir="ltr" autocapitalize="none" required>
-  <label for="p">كلمة المرور</label><input id="p" type="password" autocomplete="current-password" dir="ltr" required>
-  <button class="btn" style="width:100%;margin-top:18px" id="lb">دخول</button><div class="err" id="le"></div></form>
- <div class="lbox" id="den" hidden><h1>HEXAM</h1><p>مش مصرّح لك</p><div class="err" style="color:var(--mut)">الحساب ده مش ضمن مسؤولي المتجر.</div>
-  <button class="btn g" style="width:100%;margin-top:14px" id="dout">خروج</button></div>
-</section>
-<section id="app" hidden><div class="wrap">
- <div class="top"><h2>HEXAM</h2><div class="r"><span class="me" id="me"></span><button class="btn g s" id="snd">التنبيه: شغال</button><button class="btn g s" id="csv">تصدير CSV</button><button class="btn g s" id="out">خروج</button></div></div>
- <div class="stats" id="stats"></div>
- <div class="panel"><h3>المنتجات المباعة (الطلبات المقبولة فقط)</h3><table class="pt" id="pt"></table></div>
- <div class="bar"><input id="q" type="search" placeholder="ابحث بالاسم / الموبايل / كود الطلب"><select id="per"><option value="all">كل الفترات</option><option value="today">النهاردة</option><option value="month">الشهر ده</option></select>
-  <select id="sort"><option value="new">الأحدث أولاً</option><option value="old">الأقدم أولاً</option></select><span class="me" id="cnt" style="align-self:center"></span></div>
- <div class="chips" id="chips"></div>
- <div class="panel" style="padding:6px;background:transparent;border:0"><table id="tb"></table></div>
-</div></section>
-
-<!-- Invoice Hidden Container for Printing -->
-<div id="invoice-print-area" hidden></div>
-
-<script>addEventListener('error',e=>{const l=document.getElementById('le');if(l)l.textContent='خطأ في تحميل الصفحة: '+(e.message||'ملف ناقص أو قديم')});</script>
-<script type="module">
-const $=s=>document.querySelector(s);
-const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const ST={new:'جديد',confirmed:'مقبول',shipped:'تم الشحن',delivered:'تم التسليم',cancelled:'مرفوض / ملغي'};
-const OK=['confirmed','shipped','delivered'];
-const money=n=>Number(n||0).toLocaleString('en-US')+' ج.م';
-const dk=d=>d.toLocaleDateString('en-CA',{timeZone:'Africa/Cairo'});
-const ft=d=>d.toLocaleString('ar-EG',{timeZone:'Africa/Cairo',dateStyle:'medium',timeStyle:'short'});
-const pcs=o=>(o.items||[]).reduce((s,i)=>s+Number(i.qty||0),0);
-const sum=a=>a.reduce((s,o)=>s+Number(o.total||0),0), sumP=a=>a.reduce((s,o)=>s+pcs(o),0);
-let orders=[],filter='all',sound=true,open=new Set(),seen=null,timer=null;
-let token=sessionStorage.getItem('hx_t'),me=sessionStorage.getItem('hx_u');
-const uname=()=>me;
-const api=async(path,o={})=>{const r=await fetch(path,{...o,headers:{'Content-Type':'application/json',Authorization:'Bearer '+token}});if(r.status===401){logout();throw 401}if(!r.ok){const j=await r.json().catch(()=>({}));throw{s:r.status,e:j.error}}return r.json()};
-function toast(m){const t=document.createElement('div');t.className='toast';t.textContent=m;document.body.appendChild(t);setTimeout(()=>t.remove(),4500)}
-function beep(){if(!sound)return;try{const c=new(window.AudioContext||window.webkitAudioContext)(),o=c.createOscillator(),g=c.createGain();o.connect(g);g.connect(c.destination);o.frequency.value=880;g.gain.setValueAtTime(.2,c.currentTime);g.gain.exponentialRampToValueAtTime(.001,c.currentTime+.5);o.start();o.stop(c.currentTime+.5)}catch(e){}}
-function show(){const on=!!token;$('#login').hidden=on;$('#app').hidden=!on;clearInterval(timer);
- if(on){$('#me').textContent='مسجّل: '+me;load();timer=setInterval(load,8000)}else{orders=[];seen=null}}
-function logout(){token=me=null;sessionStorage.clear();show()}
-async function load(){try{const r=await api('/api/orders');const list=r.orders.map(o=>({...o,date:new Date(o.createdAt)}));
- if(seen)list.forEach(o=>{if(!seen.has(o.id)){beep();toast('طلب جديد وصل')}});
- seen=new Set(list.map(o=>o.id));orders=list;if(!document.activeElement?.matches('select[data-s]'))render()}catch(e){if(e!==401)toast(e&&e.e==='no-db'?'قاعدة البيانات (Upstash) مش مربوطة بالمشروع':e&&e.s===404?'ملف api/orders.js مش موجود':'مشكلة في تحميل الطلبات'+(e&&e.e?' ['+e.e+']':''))}}
-document.addEventListener('visibilitychange',()=>{if(!document.hidden&&token)load()});
-$('#lf').addEventListener('submit',async e=>{e.preventDefault();$('#le').textContent='';$('#lb').disabled=true;
- try{const r=await fetch('/api/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({user:$('#u').value,pass:$('#p').value})});
-  if(r.ok){const j=await r.json();token=j.token;me=j.user;sessionStorage.setItem('hx_t',token);sessionStorage.setItem('hx_u',me);$('#p').value='';show()}
-  else $('#le').textContent=r.status===429?'محاولات كتير، جرّب بعد شوية':r.status===404?'السيرفر مش شغال (فولدر api ناقص)':'اليوزر نيم أو الباسورد غلط'}
- catch{$('#le').textContent='مفيش اتصال بالسيرفر'}
- $('#lb').disabled=false});
-$('#out').onclick=logout;show();
-function stats(){const td=dk(new Date()),mo=td.slice(0,7),ok=orders.filter(o=>OK.includes(o.status)),pend=orders.filter(o=>o.status==='new');
- const d=ok.filter(o=>dk(o.date)===td),m=ok.filter(o=>dk(o.date).startsWith(mo));
- const c=(l,n,s,k)=>`<div class="st ${k||''}"><small>${l}</small><b>${n}</b><span>${s}</span></div>`;
- $('#stats').innerHTML=c('مستنية قبول',pend.length+' طلب',money(sum(pend))+' · '+sumP(pend)+' قطعة','p')+
-  c('مبيعات النهاردة',money(sum(d)),d.length+' طلب · '+sumP(d)+' قطعة','ok')+c('مبيعات الشهر',money(sum(m)),m.length+' طلب · '+sumP(m)+' قطعة','ok')+
-  c('إجمالي المبيعات',money(sum(ok)),ok.length+' طلب · '+sumP(ok)+' قطعة','ok');
- const by={};ok.forEach(o=>(o.items||[]).forEach(i=>{const k=String(i.name).trim()+' | '+i.size;by[k]=by[k]||{q:0,v:0};by[k].q+=Number(i.qty);by[k].v+=Number(i.qty)*Number(i.price)}));
- const r=Object.entries(by).sort((a,b)=>b[1].q-a[1].q);
- $('#pt').innerHTML='<thead><tr><th>المنتج | المقاس</th><th>القطع</th><th>المبلغ</th></tr></thead><tbody>'+(r.length?r.map(([k,v])=>`<tr><td>${esc(k)}</td><td>${v.q}</td><td>${money(v.v)}</td></tr>`).join(''):'<tr><td colspan="3" class="empty">لسه مفيش طلبات مقبولة</td></tr>')+'</tbody>'}
-function vis(){const q=$('#q').value.trim().toLowerCase(),per=$('#per').value,td=dk(new Date());
- let r=orders.filter(o=>(filter==='all'||o.status===filter)&&(per==='all'||(per==='today'?dk(o.date)===td:dk(o.date).startsWith(td.slice(0,7))))&&(!q||[o.name,o.phone,o.phone2,o.code,o.address].join(' ').toLowerCase().includes(q)));
- return $('#sort').value==='old'?r.slice().reverse():r}
-function render(){stats();
- $('#chips').innerHTML=[['all','الكل']].concat(Object.entries(ST)).map(([k,v])=>`<button class="chip${filter===k?' on':''}" data-f="${k}">${v} (${k==='all'?orders.length:orders.filter(o=>o.status===k).length})</button>`).join('');
- const r=vis();$('#cnt').textContent=r.length+' طلب';
- $('#tb').innerHTML='<thead><tr><th>الكود</th><th>الوقت</th><th>العميل</th><th>الموبايل</th><th>القطع</th><th>الإجمالي</th><th>الحالة</th><th>إجراء</th></tr></thead><tbody>'+(r.length?r.map(o=>{
-  const st=ST[o.status]?o.status:'new',ph=esc(o.phone);
-  const act=st==='new'?`<button class="btn ok s" data-a="acc">قبول</button><button class="btn bad s" data-a="rej">رفض</button>`:`<select data-s>${Object.entries(ST).filter(([k])=>k!=='new').map(([k,v])=>`<option value="${k}"${k===st?' selected':''}>${v}</option>`).join('')}</select>`;
-  let h=`<tr class="row ${st==='new'?'new':''}" data-id="${o.id}"><td data-l="الكود"><b>${esc(o.code)}</b></td><td data-l="الوقت">${ft(o.date)}</td><td data-l="العميل">${esc(o.name)}</td><td data-l="الموبايل" dir="ltr">${ph}</td><td data-l="القطع">${pcs(o)}</td><td data-l="الإجمالي"><b>${money(o.total)}</b></td><td data-l="الحالة"><span class="badge s-${st}">${ST[st]}</span></td><td data-l="إجراء"><div class="ac">${act}</div></td></tr>`;
-  if(open.has(o.id))h+=`<tr class="det" data-id="${o.id}"><td colspan="8"><div class="dg"><div><i>العنوان: </i>${esc(o.address)}</div>${o.phone2?`<div><i>موبايل إضافي: </i><span dir="ltr">${esc(o.phone2)}</span></div>`:''}${o.note?`<div><i>ملاحظة: </i>${esc(o.note)}</div>`:''}
-   <div><b>تفاصيل المنتجات والقطع المطلوبة:</b> ${(o.items||[]).map(i=>`<div class="it"><span>${esc(i.name)} · المقاس: ${esc(i.size)} × ${esc(i.qty)} قطع</span><span>${money(i.price*i.qty)}</span></div>`).join('')}</div>
-   ${o.acceptedBy?`<div><i>اتقبل بواسطة: </i>${esc(o.acceptedBy)}</div>`:''}
-   <div class="ac"><a class="btn g s" href="tel:${ph}">اتصال</a><a class="btn g s" target="_blank" rel="noopener" href="https://wa.me/2${ph}">واتساب</a><button class="btn g s" data-a="print">🖨️ طباعة فاتورة</button><button class="btn g s" data-a="copy">نسخ</button><button class="btn bad s" data-a="del">حذف</button></div></div></td></tr>`;
-  return h}).join(''):'<tr><td colspan="8" class="empty">مفيش طلبات هنا</td></tr>')+'</tbody>'}
-['#q','#per','#sort'].forEach(s=>$(s).addEventListener('input',render));$('#chips').addEventListener('click',e=>{const b=e.target.closest('[data-f]');if(b){filter=b.dataset.f;render()}});
-const upd=async(id,d)=>{try{const r=await api('/api/orders',{method:'PATCH',body:JSON.stringify({id,...d})});orders=orders.map(x=>x.id===id?{...x,...r.order}:x);render();toast('تم')}catch{toast('فشل التنفيذ')}};
-$('#tb').addEventListener('change',e=>{if(e.target.matches('[data-s]'))upd(e.target.closest('[data-id]').dataset.id,{status:e.target.value})});
-$('#tb').addEventListener('click',async e=>{const tr=e.target.closest('[data-id]');if(!tr)return;const id=tr.dataset.id,o=orders.find(x=>x.id===id),a=e.target.closest('[data-a]')?.dataset.a;
- if(!a){if(e.target.closest('select,a,button'))return;open.has(id)?open.delete(id):open.add(id);render();return}
- if(a==='acc')upd(id,{status:'confirmed'});
- if(a==='rej'&&confirm('رفض الطلب ده؟'))upd(id,{status:'cancelled'});
- if(a==='del'&&confirm('حذف الطلب نهائيًا؟'))try{await api('/api/orders?id='+encodeURIComponent(id),{method:'DELETE'});orders=orders.filter(x=>x.id!==id);render();toast('اتحذف')}catch{toast('فشل الحذف')}
- if(a==='print'){
-  const printArea=$('#invoice-print-area');
-  printArea.innerHTML=`
-   <div style="font-family:'Cairo',sans-serif;direction:rtl;padding:20px;max-width:800px;margin:auto;">
-    <div style="display:flex;justify-content:space-between;border-bottom:2px solid #000;padding-bottom:15px;margin-bottom:20px;">
-     <div><h1 style="margin:0;font-size:24px;">HEXAM STORE</h1><p style="margin:4px 0 0;font-size:13px;color:#555;">فاتورة طلب عميل (الدفع عند الاستلام)</p></div>
-     <div style="text-align:left;"><b>كود الطلب:</b> ${esc(o.code)}<br><span style="font-size:12px;color:#555;">${ft(o.date)}</span></div>
-    </div>
-    <div style="margin-bottom:20px;background:#f9f9f9;padding:12px;border-radius:8px;">
-     <h3 style="margin:0 0 8px;font-size:15px;border-bottom:1px solid #ddd;padding-bottom:4px;">بيانات العميل:</h3>
-     <p style="margin:4px 0;"><b>اسم العميل:</b> ${esc(o.name)}</p>
-     <p style="margin:4px 0;"><b>رقم الموبايل:</b> <span dir="ltr">${esc(o.phone)}</span> ${o.phone2?` / <span dir="ltr">${esc(o.phone2)}</span>`:''}</p>
-     <p style="margin:4px 0;"><b>عنوان الشحن:</b> ${esc(o.address)}</p>
-     ${o.note?`<p style="margin:4px 0;"><b>ملاحظات:</b> ${esc(o.note)}</p>`:''}
-    </div>
-    <table style="width:100%;border-collapse:collapse;margin-bottom:20px;font-size:14px;">
-     <thead><tr style="background:#eee;"><th style="border:1px solid #ccc;padding:8px;text-align:right;">المنتج</th><th style="border:1px solid #ccc;padding:8px;text-align:center;">المقاس</th><th style="border:1px solid #ccc;padding:8px;text-align:center;">العدد</th><th style="border:1px solid #ccc;padding:8px;text-align:left;">السعر الإجمالي</th></tr></thead>
-     <tbody>
-      ${(o.items||[]).map(i=>`<tr><td style="border:1px solid #ccc;padding:8px;">${esc(i.name)}</td><td style="border:1px solid #ccc;padding:8px;text-align:center;"><b>${esc(i.size)}</b></td><td style="border:1px solid #ccc;padding:8px;text-align:center;">${i.qty}</td><td style="border:1px solid #ccc;padding:8px;text-align:left;">${money(i.price*i.qty)}</td></tr>`).join('')}
-     </tbody>
-    </table>
-    <div style="display:flex;justify-content:space-between;align-items:center;border-top:2px solid #000;padding-top:10px;">
-     <div><b>إجمالي القطع:</b> ${pcs(o)} قطعة</div>
-     <div style="font-size:18px;"><b>الإجمالي الكلي: ${money(o.total)}</b></div>
-    </div>
-    <div style="margin-top:40px;text-align:center;font-size:12px;color:#777;border-top:1px dashed #ccc;padding-top:10px;">
-     شكراً لتسوقك معنا - HEXAM
-    </div>
-   </div>
-  `;
-  window.print();
- }
- if(a==='copy'){const t=`طلب ${o.code}\nالاسم: ${o.name}\nالموبايل: ${o.phone}${o.phone2?' / '+o.phone2:''}\nالعنوان: ${o.address}\n`+(o.items||[]).map(i=>`- ${i.name} | ${i.size} | ${i.qty} × ${i.price}`).join('\n')+`\nالإجمالي: ${o.total} ج.م`+(o.note?`\nملاحظة: ${o.note}`:'');
-  try{await navigator.clipboard.writeText(t);toast('اتنسخ')}catch{toast('المتصفح منع النسخ')}}});
-$('#snd').onclick=()=>{sound=!sound;$('#snd').textContent=sound?'التنبيه: شغال':'التنبيه: مكتوم'};
-$('#csv').onclick=()=>{const c=v=>'"'+String(v??'').replace(/"/g,'""')+'"',h=['الكود','التاريخ','الاسم','الموبايل','العنوان','المنتجات','القطع','الإجمالي','الحالة','قبله'];
- const rows=vis().map(o=>[o.code,ft(o.date),o.name,o.phone,o.address,(o.items||[]).map(i=>`${i.name} (${i.size}) x${i.qty}`).join(' | '),pcs(o),o.total,ST[o.status]||o.status,o.acceptedBy||'']);
- const a=document.createElement('a');a.href=URL.createObjectURL(new Blob(['\ufeff'+[h,...rows].map(r=>r.map(c).join(',')).join('\n')],{type:'text/csv;charset=utf-8'}));a.download='hexam-orders-'+dk(new Date())+'.csv';a.click()};
-</script></body></html>
+.chips{display:flex;gap:8px;overflow-x:auto;padding-bottom:6px;margin-bottom:12px}.
