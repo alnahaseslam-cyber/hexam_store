@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow,noarchive,nosnippet">
+<meta name="referrer" content="no-referrer">
+<title>HEXAM Panel</title>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0a0a0a;--card:#161616;--line:#262626;--tx:#f5f5f5;--mut:#8a8a8a;--ac:#fff;--ok:#22c55e;--warn:#f59e0b;--bad:#ef4444;--info:#3b82f6}
+*{box-sizing:border-box;margin:0}
+html,body{background:var(--bg);color:var(--tx);font-family:'Cairo',sans-serif;-webkit-text-size-adjust:100%}
+body{min-height:100vh;padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom)}
+[hidden]{display:none!important}
+button,input,select{font-family:inherit;font-size:16px;color:var(--tx)}
+input,select{background:#0f0f0f;border:1px solid var(--line);border-radius:10px;padding:11px 14px;width:100%;outline:none}
+input:focus,select:focus{border-color:#666}
+.btn{background:var(--ac);color:#000;border:0;border-radius:10px;padding:11px 18px;font-weight:700;cursor:pointer}
+.btn.ghost{background:transparent;color:var(--tx);border:1px solid var(--line)}
+.btn.sm{padding:7px 12px;font-size:13px}
+.btn.bad{background:transparent;color:var(--bad);border:1px solid #4a1d1d}
+#login{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
+.lbox{width:100%;max-width:380px;background:var(--card);border:1px solid var(--line);border-radius:18px;padding:30px}
+.lbox h1{font-size:26px;letter-spacing:.2em;text-align:center;margin-bottom:4px}
+.lbox p{color:var(--mut);text-align:center;font-size:13px;margin-bottom:22px}
+.lbox label{display:block;font-size:13px;margin:12px 0 6px;color:var(--mut)}
+.err{color:var(--bad);font-size:13px;margin-top:12px;min-height:18px;text-align:center}
+.wrap{max-width:1280px;margin:0 auto;padding:16px}
+.top{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:8px 0 18px}
+.top h2{font-size:20px;letter-spacing:.15em}
+.top .r{display:flex;gap:8px;align-items:center}
+.live{width:9px;height:9px;border-radius:50%;background:var(--ok);box-shadow:0 0 0 0 var(--ok);animation:p 2s infinite}
+@keyframes p{70%{box-shadow:0 0 0 8px transparent}100%{box-shadow:0 0 0 0 transparent}}
+.stats{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-bottom:18px}
+@media(min-width:900px){.stats{grid-template-columns:repeat(4,1fr)}}
+.st{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px}
+.st small{color:var(--mut);font-size:12px}
+.st b{display:block;font-size:26px;margin:4px 0 2px}
+.st span{font-size:13px;color:var(--ok)}
+.st.hl{border-color:#444}
+.bar{display:grid;grid-template-columns:1fr;gap:10px;margin-bottom:14px}
+@media(min-width:760px){.bar{grid-template-columns:2fr 1fr 1fr auto}}
+.chips{display:flex;gap:8px;overflow-x:auto;padding-bottom:6px;margin-bottom:14px}
+.chip{white-space:nowrap;background:var(--card);border:1px solid var(--line);border-radius:99px;padding:6px 14px;font-size:13px;cursor:pointer}
+.chip.on{background:var(--ac);color:#000;border-color:var(--ac);font-weight:700}
+.list{display:grid;grid-template-columns:1fr;gap:12px}
+@media(min-width:1000px){.list{grid-template-columns:1fr 1fr}}
+.o{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px}
+.o.fresh{border-color:var(--ok)}
+.oh{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;margin-bottom:10px}
+.code{font-weight:800;letter-spacing:.05em}
+.time{color:var(--mut);font-size:12px}
+.badge{font-size:12px;padding:3px 10px;border-radius:99px;font-weight:700;white-space:nowrap}
+.s-new{background:#3b82f622;color:var(--info)}.s-confirmed{background:#f59e0b22;color:var(--warn)}
+.s-shipped{background:#a855f722;color:#c084fc}.s-delivered{background:#22c55e22;color:var(--ok)}.s-cancelled{background:#ef444422;color:var(--bad)}
+.row{font-size:14px;margin:5px 0;display:flex;gap:6px;flex-wrap:wrap}
+.row i{font-style:normal;color:var(--mut);min-width:62px}
+.row a{color:var(--tx)}
+.items{background:#0f0f0f;border-radius:10px;padding:10px 12px;margin:10px 0;font-size:13px}
+.items div{display:flex;justify-content:space-between;gap:8px;padding:3px 0}
+.tot{display:flex;justify-content:space-between;font-weight:800;font-size:17px;margin:8px 0 12px}
+.act{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.act select{width:auto;padding:7px 10px;font-size:14px}
+.empty{text-align:center;color:var(--mut);padding:50px 10px;grid-column:1/-1}
+.lbox .lnk{display:block;text-align:center;margin-top:16px;font-size:13px;color:var(--mut);cursor:pointer;text-decoration:underline;background:none;border:0;width:100%}
+.hint{background:#0f0f0f;border:1px solid var(--line);border-radius:10px;padding:10px 12px;font-size:12.5px;color:var(--mut);line-height:1.8;margin:8px 0}
+.hint b{color:var(--tx)}
+.ck{list-style:none;padding:0;margin:6px 0 0;font-size:12.5px}
+.ck li{color:var(--mut);padding:1px 0}.ck li:before{content:"\2715";margin-inline-end:6px;color:var(--bad)}
+.ck li.ok{color:var(--ok)}.ck li.ok:before{content:"\2713";color:var(--ok)}
+.btn:disabled{opacity:.35;cursor:not-allowed}
+#login{flex-direction:column;gap:16px}
+.toast{position:fixed;bottom:calc(20px + env(safe-area-inset-bottom));left:50%;transform:translateX(-50%);background:#fff;color:#000;padding:10px 18px;border-radius:99px;font-weight:700;font-size:14px;z-index:9}
+</style>
+</head>
+<body>
+
+<section id="login" hidden>
+  <form class="lbox" id="lf" autocomplete="on">
+    <h1>HEXAM</h1><p>لوحة التحكم</p>
+    <label for="u">اسم المستخدم</label>
+    <input id="u" name="username" autocomplete="username" dir="ltr" required>
+    <label for="p">كلمة المرور</label>
+    <input id="p" name="password" type="password" autocomplete="current-password" dir="ltr" required>
+    <button class="btn" style="width:100%;margin-top:18px" id="lb">دخول</button>
+    <div class="err" id="le"></div>
+    <button type="button" class="lnk" id="toSign">عايز تعمل حساب جديد؟</button>
+  </form>
+
+  <form class="lbox" id="sf" autocomplete="off" hidden>
+    <h1>حساب جديد</h1><p>الحساب بيتفعّل بعد موافقة صاحب المتجر</p>
+    <div class="hint">
+      <b>إزاي تكتب يوزر نيم قوي:</b> من 8 لـ 20 حرف إنجليزي صغير وأرقام و _ بس، ولازم فيه حرف ورقم. مثال: <b>nour_shop84</b><br>
+      <b>إزاي تعمل باسورد قوي:</b> 12 حرف أو أكتر، فيه حرف كبير وصغير ورقم ورمز (مثل ! @ #). فكّر في جملة تحبها وغيّر فيها حروف بأرقام ورموز، وماتستخدمش اسمك أو تاريخ ميلادك أو أرقام ورا بعض.
+    </div>
+    <label for="nu">اليوزر نيم الجديد</label>
+    <input id="nu" dir="ltr" autocapitalize="none" autocomplete="off" spellcheck="false" maxlength="20">
+    <ul class="ck" id="cu"></ul>
+    <label for="np">الباسورد الجديد</label>
+    <input id="np" type="password" dir="ltr" autocomplete="new-password">
+    <ul class="ck" id="cp"></ul>
+    <label for="np2">تأكيد الباسورد</label>
+    <input id="np2" type="password" dir="ltr" autocomplete="new-password">
+    <ul class="ck" id="cc"></ul>
+    <button class="btn" style="width:100%;margin-top:16px" id="sb" disabled>إنشاء الحساب</button>
+    <div class="err" id="se"></div>
+    <button type="button" class="lnk" id="toLogin">عندي حساب بالفعل</button>
+  </form>
+
+  <div class="lbox" id="pending" hidden>
+    <h1>HEXAM</h1><p>الحساب اتعمل</p>
+    <div class="hint" style="text-align:center">اليوزر نيم: <b id="pu" dir="ltr"></b><br>حسابك لسه مستني موافقة صاحب المتجر. بعد التفعيل اعمل ريفريش للصفحة.</div>
+    <button class="btn ghost" style="width:100%" id="pout">خروج</button>
+  </div>
+</section>
+
+<section id="app" hidden>
+  <div class="wrap">
+    <div class="top">
+      <h2>HEXAM <span class="live" style="display:inline-block;margin-inline-start:6px"></span></h2>
+      <div class="r">
+        <button class="btn ghost sm" id="snd" title="صوت التنبيه">التنبيه: شغال</button>
+        <button class="btn ghost sm" id="csv">تصدير CSV</button>
+        <button class="btn ghost sm" id="out">خروج</button>
+      </div>
+    </div>
+
+    <div class="stats" id="stats"></div>
+
+    <div class="bar">
+      <input id="q" placeholder="ابحث بالاسم / الموبايل / كود الطلب" type="search">
+      <select id="per">
+        <option value="all">كل الفترات</option>
+        <option value="today">النهاردة</option>
+        <option value="month">الشهر ده</option>
+      </select>
+      <select id="sort"><option value="new">الأحدث أولاً</option><option value="old">الأقدم أولاً</option></select>
+      <span class="time" id="cnt" style="align-self:center"></span>
+    </div>
+
+    <div class="chips" id="chips"></div>
+    <div class="list" id="list"></div>
+  </div>
+</section>
+
+<script type="module">
+import { firebaseConfig, ADMIN_DOMAIN } from '../firebase-config.js';
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
+import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
+import { getFirestore, collection, query, orderBy, onSnapshot, updateDoc, deleteDoc, doc } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
+
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const ST = { new:'جديد', confirmed:'تم التأكيد', shipped:'تم الشحن', delivered:'تم التسليم', cancelled:'ملغي' };
+const money = n => Number(n || 0).toLocaleString('en-US') + ' ج.م';
+const dayKey = d => d.toLocaleDateString('en-CA', { timeZone: 'Africa/Cairo' });
+const fmtTime = d => d.toLocaleString('ar-EG', { timeZone: 'Africa/Cairo', dateStyle: 'medium', timeStyle: 'short' });
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app), db = getFirestore(app);
+let orders = [], filter = 'all', unsub = null, first = true, sound = true, freshIds = new Set();
+
+function toast(m) { const t = document.createElement('div'); t.className = 'toast'; t.textContent = m; document.body.appendChild(t); setTimeout(() => t.remove(), 2200); }
+function beep() {
+  if (!sound) return;
+  try { const c = new (window.AudioContext || window.webkitAudioContext)(), o = c.createOscillator(), g = c.createGain();
+    o.connect(g); g.connect(c.destination); o.frequency.value = 880; g.gain.setValueAtTime(.2, c.currentTime);
+    g.gain.exponentialRampToValueAtTime(.001, c.currentTime + .5); o.start(); o.stop(c.currentTime + .5); } catch (e) {}
+}
+
+// ---------- Auth ----------
+$('#lf').addEventListener('submit', async e => {
+  e.preventDefault(); $('#le').textContent = ''; $('#lb').disabled = true;
+  try { await signInWithEmailAndPassword(auth, $('#u').value.trim().toLowerCase() + '@' + ADMIN_DOMAIN, $('#p').value); }
+  catch (err) { $('#le').textContent = err.code === 'auth/too-many-requests' ? 'محاولات كتير، جرّب بعد شوية' : 'اليوزر نيم أو الباسورد غلط'; }
+  $('#lb').disabled = false;
+});
+$('#out').onclick = () => signOut(auth);
+$('#pout').onclick = () => signOut(auth);
+
+// ---------- Sign up (strong user/password only) ----------
+const BAD_U = ['admin', 'test', 'user', 'root', 'hexam', 'password', 'guest'];
+const SEQ = /(0123|1234|2345|3456|4567|5678|6789|abcd|qwer|asdf|zxcv|pass|0000|1111)/i;
+const userRules = u => [
+  ['من 8 لـ 20 حرف', u.length >= 8 && u.length <= 20],
+  ['حروف إنجليزي صغيرة وأرقام و _ بس', u.length > 0 && /^[a-z0-9_]+$/.test(u)],
+  ['فيه حرف ورقم على الأقل', /[a-z]/.test(u) && /\d/.test(u)],
+  ['مش كلمة سهلة (admin / test / user ...)', u.length > 0 && !BAD_U.some(w => u.includes(w))]
+];
+const passRules = (p, u) => [
+  ['12 حرف أو أكتر', p.length >= 12],
+  ['حرف كبير وحرف صغير', /[A-Z]/.test(p) && /[a-z]/.test(p)],
+  ['رقم واحد على الأقل', /\d/.test(p)],
+  ['رمز واحد على الأقل (! @ # $ ...)', /[^A-Za-z0-9]/.test(p)],
+  ['مفيهوش اليوزر نيم أو أرقام/حروف ورا بعض', p.length > 0 && !(u && p.toLowerCase().includes(u)) && !SEQ.test(p) && !/(.)\1\1/.test(p)]
+];
+const ckHtml = r => r.map(([l, ok]) => `<li class="${ok ? 'ok' : ''}">${l}</li>`).join('');
+function checkSign() {
+  const u = $('#nu').value.trim().toLowerCase(), p = $('#np').value, p2 = $('#np2').value;
+  const ru = userRules(u), rp = passRules(p, u), rc = [['الباسورد متطابق', p2.length > 0 && p === p2]];
+  $('#cu').innerHTML = ckHtml(ru); $('#cp').innerHTML = ckHtml(rp); $('#cc').innerHTML = ckHtml(rc);
+  $('#sb').disabled = ![...ru, ...rp, ...rc].every(x => x[1]);
+}
+['#nu', '#np', '#np2'].forEach(s => $(s).addEventListener('input', checkSign));
+$('#toSign').onclick = () => { $('#lf').hidden = true; $('#sf').hidden = false; checkSign(); };
+$('#toLogin').onclick = () => { $('#sf').hidden = true; $('#lf').hidden = false; };
+$('#sf').addEventListener('submit', async e => {
+  e.preventDefault(); checkSign(); if ($('#sb').disabled) return;
+  $('#se').textContent = ''; $('#sb').disabled = true;
+  try { await createUserWithEmailAndPassword(auth, $('#nu').value.trim().toLowerCase() + '@' + ADMIN_DOMAIN, $('#np').value); }
+  catch (err) { $('#se').textContent = err.code === 'auth/email-already-in-use' ? 'اليوزر نيم ده مستخدم، اختار غيره' : 'مقدرناش نعمل الحساب، جرّب تاني'; checkSign(); }
+});
+
+function showLogin() {
+  $('#login').hidden = false; $('#app').hidden = true;
+  $('#lf').hidden = false; $('#sf').hidden = true; $('#pending').hidden = true;
+}
+function showPending() {
+  $('#login').hidden = false; $('#app').hidden = true;
+  $('#lf').hidden = true; $('#sf').hidden = true; $('#pending').hidden = false;
+  $('#pu').textContent = (auth.currentUser?.email || '').split('@')[0];
+}
+
+onAuthStateChanged(auth, user => {
+  if (unsub) { unsub(); unsub = null; }
+  if (!user) { orders = []; showLogin(); return; }
+  $('#login').hidden = true; $('#app').hidden = false;
+  first = true;
+  unsub = onSnapshot(query(collection(db, 'orders'), orderBy('createdAt', 'desc')), snap => {
+    if (!first) snap.docChanges().forEach(c => { if (c.type === 'added' && !c.doc.metadata.hasPendingWrites) { freshIds.add(c.doc.id); beep(); toast('طلب جديد وصل'); } });
+    first = false;
+    orders = snap.docs.map(d => { const x = d.data(); return { id: d.id, ...x, date: x.createdAt?.toDate?.() || new Date() }; });
+    render();
+  }, err => { console.error(err); if (err.code === 'permission-denied') showPending(); else toast('مشكلة في تحميل الطلبات'); });
+});
+
+// ---------- Render ----------
+function stats() {
+  const now = new Date(), td = dayKey(now), mo = td.slice(0, 7);
+  const valid = orders.filter(o => o.status !== 'cancelled');
+  const sum = a => a.reduce((s, o) => s + Number(o.total || 0), 0);
+  const day = valid.filter(o => dayKey(o.date) === td), mon = valid.filter(o => dayKey(o.date).startsWith(mo));
+  const nw = orders.filter(o => o.status === 'new').length;
+  const card = (l, n, s, hl) => `<div class="st${hl ? ' hl' : ''}"><small>${l}</small><b>${n}</b><span>${s}</span></div>`;
+  $('#stats').innerHTML =
+    card('طلبات النهاردة', day.length, money(sum(day))) +
+    card('طلبات الشهر', mon.length, money(sum(mon))) +
+    card('إجمالي المبيعات', valid.length + ' طلب', money(sum(valid))) +
+    card('طلبات جديدة (لسه)', nw, 'محتاجة تأكيد', nw > 0);
+}
+function visible() {
+  const q = $('#q').value.trim().toLowerCase(), per = $('#per').value, td = dayKey(new Date());
+  let r = orders.filter(o => (filter === 'all' || o.status === filter)
+    && (per === 'all' || (per === 'today' ? dayKey(o.date) === td : dayKey(o.date).startsWith(td.slice(0, 7))))
+    && (!q || [o.name, o.phone, o.phone2, o.code, o.address].join(' ').toLowerCase().includes(q)));
+  if ($('#sort').value === 'old') r = r.slice().reverse();
+  return r;
+}
+function render() {
+  stats();
+  $('#chips').innerHTML = [['all', 'الكل']].concat(Object.entries(ST)).map(([k, v]) =>
+    `<button class="chip${filter === k ? ' on' : ''}" data-f="${k}">${v} (${k === 'all' ? orders.length : orders.filter(o => o.status === k).length})</button>`).join('');
+  const r = visible(); $('#cnt').textContent = r.length + ' طلب';
+  $('#list').innerHTML = r.length ? r.map(o => {
+    const st = ST[o.status] ? o.status : 'new', ph = esc(o.phone), ph2 = esc(o.phone2);
+    return `<article class="o${freshIds.has(o.id) ? ' fresh' : ''}" data-id="${o.id}">
+      <div class="oh"><div><div class="code">${esc(o.code)}</div><div class="time">${fmtTime(o.date)}</div></div><span class="badge s-${st}">${ST[st]}</span></div>
+      <div class="row"><i>الاسم</i><b>${esc(o.name)}</b></div>
+      <div class="row"><i>الموبايل</i><a href="tel:${ph}" dir="ltr">${ph}</a> · <a href="https://wa.me/2${ph}" target="_blank" rel="noopener">واتساب</a></div>
+      ${ph2 ? `<div class="row"><i>إضافي</i><a href="tel:${ph2}" dir="ltr">${ph2}</a></div>` : ''}
+      <div class="row"><i>العنوان</i><span>${esc(o.address)}</span></div>
+      ${o.note ? `<div class="row"><i>ملاحظة</i><span>${esc(o.note)}</span></div>` : ''}
+      <div class="items">${(o.items || []).map(i => `<div><span>${esc(i.name)} · ${esc(i.size)} × ${esc(i.qty)}</span><span>${money(i.price * i.qty)}</span></div>`).join('')}</div>
+      <div class="tot"><span>الإجمالي (دفع عند الاستلام)</span><span>${money(o.total)}</span></div>
+      <div class="act">
+        <select data-s>${Object.entries(ST).map(([k, v]) => `<option value="${k}"${k === st ? ' selected' : ''}>${v}</option>`).join('')}</select>
+        <button class="btn ghost sm" data-copy>نسخ</button>
+        <button class="btn bad sm" data-del>حذف</button>
+      </div></article>`;
+  }).join('') : '<div class="empty">مفيش طلبات هنا لسه</div>';
+}
+
+// ---------- Events ----------
+['#q', '#per', '#sort'].forEach(s => $(s).addEventListener('input', render));
+$('#chips').addEventListener('click', e => { const b = e.target.closest('[data-f]'); if (b) { filter = b.dataset.f; render(); } });
+$('#list').addEventListener('change', async e => {
+  if (!e.target.matches('[data-s]')) return;
+  const id = e.target.closest('.o').dataset.id;
+  try { await updateDoc(doc(db, 'orders', id), { status: e.target.value }); freshIds.delete(id); toast('اتحدّثت الحالة'); } catch { toast('فشل التحديث'); }
+});
+$('#list').addEventListener('click', async e => {
+  const card = e.target.closest('.o'); if (!card) return;
+  const o = orders.find(x => x.id === card.dataset.id); if (!o) return;
+  if (e.target.matches('[data-del]') && confirm('متأكد إنك عايز تحذف الطلب ده نهائي؟')) {
+    try { await deleteDoc(doc(db, 'orders', o.id)); toast('اتحذف'); } catch { toast('فشل الحذف'); }
+  }
+  if (e.target.matches('[data-copy]')) {
+    const t = `طلب ${o.code}\nالاسم: ${o.name}\nالموبايل: ${o.phone}${o.phone2 ? ' / ' + o.phone2 : ''}\nالعنوان: ${o.address}\n` +
+      (o.items || []).map(i => `- ${i.name} | ${i.size} | ${i.qty} × ${i.price}`).join('\n') + `\nالإجمالي: ${o.total} ج.م` + (o.note ? `\nملاحظة: ${o.note}` : '');
+    try { await navigator.clipboard.writeText(t); toast('اتنسخ'); } catch { toast('المتصفح منع النسخ'); }
+  }
+});
+$('#snd').onclick = () => { sound = !sound; $('#snd').textContent = sound ? 'التنبيه: شغال' : 'التنبيه: مكتوم'; };
+$('#csv').onclick = () => {
+  const cell = v => '"' + String(v ?? '').replace(/"/g, '""') + '"';
+  const head = ['الكود', 'التاريخ', 'الاسم', 'الموبايل', 'موبايل إضافي', 'العنوان', 'المنتجات', 'الإجمالي', 'الحالة', 'ملاحظة'];
+  const rows = visible().map(o => [o.code, fmtTime(o.date), o.name, o.phone, o.phone2, o.address,
+    (o.items || []).map(i => `${i.name} (${i.size}) x${i.qty}`).join(' | '), o.total, ST[o.status] || o.status, o.note]);
+  const blob = new Blob(['\ufeff' + [head, ...rows].map(r => r.map(cell).join(',')).join('\n')], { type: 'text/csv;charset=utf-8' });
+  const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'hexam-orders-' + dayKey(new Date()) + '.csv'; a.click();
+};
+</script>
+</body>
+</html>

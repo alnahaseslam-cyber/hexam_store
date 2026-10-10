@@ -178,6 +178,33 @@
 
         /* Cart badge bump (kept, plus smoother easing) */
         #cart-badge { transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); }
+
+        /* ===== Responsive polish (PC / Tablet / Mobile) ===== */
+        html { -webkit-text-size-adjust: 100%; }
+        img, video { max-width: 100%; }
+        #pd-main-img { object-position: center; }
+        #product-view .aspect-\[4\/5\] { max-height: 78vh; }
+        @media (min-width: 1536px) {
+            .max-w-7xl { max-width: 90rem; }
+            #products-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+        }
+        @media (min-width: 768px) and (max-width: 1023px) {
+            #product-view > .grid { gap: 2rem; }
+            #product-view h1#pd-title { font-size: 2.25rem; }
+        }
+        @media (max-width: 380px) {
+            #pd-title { font-size: 1.9rem !important; }
+            nav a.font-display { font-size: 1.25rem !important; letter-spacing: .12em !important; }
+            #cart-sidebar { width: 100% !important; }
+        }
+        @media (max-width: 640px) {
+            #products-grid { row-gap: 3rem; }
+            #checkout-view form { font-size: 16px; } /* prevents iOS zoom on inputs */
+            #checkout-view input, #checkout-view textarea { font-size: 16px; }
+        }
+        @supports (padding: env(safe-area-inset-bottom)) {
+            body { padding-bottom: env(safe-area-inset-bottom); }
+        }
     </style>
 </head>
 <body class="bg-hexLight text-hexDark dark:bg-hexDark dark:text-hexLight antialiased selection:bg-black selection:text-white dark:selection:bg-white dark:selection:text-black min-h-screen flex flex-col">
@@ -531,6 +558,25 @@
         </div>
     </footer>
 
+    <script type="module">
+        // --- Cloud order storage (Firebase Firestore). Config lives in firebase-config.js ---
+        import { firebaseConfig } from './firebase-config.js';
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
+        import { getFirestore, collection, addDoc, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
+        let db = null;
+        try {
+            if (firebaseConfig && firebaseConfig.projectId && !String(firebaseConfig.projectId).startsWith('YOUR')) {
+                db = getFirestore(initializeApp(firebaseConfig));
+            }
+        } catch (e) { console.warn('Firebase init failed', e); }
+        window.saveOrderToCloud = async (order) => {
+            if (!db) return false;
+            try {
+                await addDoc(collection(db, 'orders'), { ...order, status: 'new', createdAt: serverTimestamp() });
+                return true;
+            } catch (e) { console.warn('Cloud save failed', e); return false; }
+        };
+    </script>
     <script>
         // --- Data ---
         // ملاحظة: رقم stock عندك تقدر تعدله وقت ما تحب حسب الكمية الحقيقية المتاحة
@@ -755,7 +801,7 @@
             grid.innerHTML = testimonials.map((t, index) => `
                 <div class="reveal-item bg-gray-50 dark:bg-hexGray/60 border border-black/5 dark:border-white/5 rounded-xl p-6" style="transition-delay:${index * 90}ms">
                     <div class="flex gap-1 mb-3 text-yellow-500">
-                        ${'★'.repeat(t.rating)}${'☆'.repeat(5 - t.rating)}
+                        ${starSvg(t.rating, 16)}
                     </div>
                     <p class="font-arabic text-sm text-gray-600 dark:text-gray-400 leading-relaxed mb-4">${t.text}</p>
                     <p class="font-arabic font-bold text-sm">${t.name}</p>
@@ -765,11 +811,20 @@
         }
 
         // --- Feedback Modal ---
+        // نجوم التقييم كـ SVG بدل رموز نصية
+        function starSvg(rating, size) {
+            let s = '';
+            for (let i = 1; i <= 5; i++) {
+                s += `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="currentColor" style="opacity:${i <= rating ? 1 : 0.25}" aria-hidden="true"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 21 12 17.77 5.82 21 7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>`;
+            }
+            return s;
+        }
+
         function renderFeedbackStars() {
             const starsContainer = document.getElementById('fb-stars');
             let html = '';
             for (let i = 1; i <= 5; i++) {
-                html += `<button type="button" onclick="setFeedbackRating(${i})" class="btn-pop fb-star transition-colors ${i <= fbSelectedRating ? 'text-yellow-500' : 'text-gray-300 dark:text-gray-600'}">★</button>`;
+                html += `<button type="button" onclick="setFeedbackRating(${i})" class="btn-pop fb-star transition-colors ${i <= fbSelectedRating ? 'text-yellow-500' : 'text-gray-300 dark:text-gray-600'}" aria-label="${i}">${starSvg(5, 32)}</button>`;
             }
             starsContainer.innerHTML = html;
         }
@@ -1196,6 +1251,15 @@
             submitBtn.disabled = true;
             submitBtn.textContent = 'جاري إرسال الطلب...';
 
+            // 1) حفظ الطلب في الداشبورد (مصدر أساسي)
+            if (window.saveOrderToCloud) {
+                window.saveOrderToCloud({
+                    code: orderCode, name, phone, phone2: phone2 || '', address, note: note || '',
+                    total: totalAmount,
+                    items: cart.map(i => ({ name: String(i.name).trim(), size: String(i.size), qty: Number(i.qty), price: Number(i.price) }))
+                });
+            }
+            // 2) إشعار تليجرام (احتياطي)
             sendTelegramMessage(telegramMessage);
 
             submitBtn.disabled = false;
@@ -1230,7 +1294,7 @@
               extraActions.className = 'flex flex-col gap-3 mb-4';
               modalBox.insertBefore(extraActions, modalBox.querySelector('button'));
           }
-          const whatsappText = encodeURIComponent(`مرحباً، تم تأكيد طلبي من متجر HEXAM ✅\nكود الطلب: ${orderCode}`);
+          const whatsappText = encodeURIComponent(`مرحباً، تم تأكيد طلبي من متجر HEXAM\nكود الطلب: ${orderCode}`);
           extraActions.innerHTML = `
               <a href="https://wa.me/201055339740?text=${whatsappText}" target="_blank" rel="noopener noreferrer" class="btn-pop w-full border-2 border-black dark:border-white text-black dark:text-white font-arabic font-bold py-3 rounded-md hover:bg-black hover:text-white dark:hover:bg-white dark:hover:text-black transition-colors text-sm">تواصل معنا على واتساب (اختياري)</a>
               <button type="button" onclick="closeModal(); openFeedbackModal();" class="btn-pop w-full text-sm font-arabic font-semibold underline text-gray-500 hover:text-black dark:hover:text-white transition-colors py-1">شاركنا رأيك (اختياري)</button>
