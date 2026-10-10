@@ -68,7 +68,6 @@ a{color:var(--tx);text-decoration:none}
 
 .toast{position:fixed;bottom:calc(20px + env(safe-area-inset-bottom));left:50%;transform:translateX(-50%);background:#fff;color:#000;padding:10px 20px;border-radius:99px;font-weight:700;font-size:14px;z-index:99;box-shadow:0 5px 15px rgba(0,0,0,.3)}
 
-/* Print Area Styles for Shipping / Invoices */
 @media print {
   body * { visibility: hidden; }
   #invoice-print-area, #invoice-print-area * { visibility: visible; }
@@ -98,7 +97,7 @@ a{color:var(--tx);text-decoration:none}
    <div class="r">
     <span class="me" id="me"></span>
     <button class="btn g s" id="snd">التنبيه: شغال</button>
-    <button class="btn g s" id="csv">📥 تصدير Excel/CSV</button>
+    <button class="btn g s" id="csv">📥 تصدير كشف اليوم (Excel)</button>
     <button class="btn g s" id="out">خروج</button>
    </div>
   </div>
@@ -113,9 +112,9 @@ a{color:var(--tx);text-decoration:none}
   <div class="bar">
    <input id="q" type="search" placeholder="ابحث بالاسم، الموبايل، أو كود الطلب...">
    <select id="per">
-    <option value="all">كل الفترات</option>
-    <option value="today">طلبات النهاردة</option>
+    <option value="today">طلبات النهاردة فقط</option>
     <option value="month">طلبات الشهر ده</option>
+    <option value="all">كل الفترات</option>
    </select>
    <select id="sort">
     <option value="new">الأحدث أولاً</option>
@@ -132,7 +131,6 @@ a{color:var(--tx);text-decoration:none}
  </div>
 </section>
 
-<!-- Hidden Container for Printing Shipping Invoices -->
 <div id="invoice-print-area" hidden></div>
 
 <script>
@@ -289,14 +287,15 @@ function render(){
           <div class="ac" style="margin-top:12px">
             <a class="btn g s" href="tel:${ph}">📞 اتصال</a>
             <a class="btn g s" target="_blank" rel="noopener" href="https://wa.me/2${ph}">💬 واتساب</a>
-            <button class="btn g s" data-a="ship-invoice">📦 فاتورة شركة الشحن</button>
-            <button class="btn g s" data-a="copy">📋 نسخ البيانات</button>
-            <button class="btn bad s" data-a="del">🗑️ حذف الطلب</button>
+            <button class="btn g s" data-a="download-invoice">📥 تنزيل فاتورة العميل</button>
+            <button class="btn g s" data-a="ship-invoice">📦 طباعة بوليصة الشحن</button>
+            <button class="btn g s" data-a="copy">📋 نسخ</button>
+            <button class="btn bad s" data-a="del">🗑️ حذف</button>
           </div>
         </div></td></tr>`;
       }
       return h;
-    }).join('') : '<tr><td colspan="8" class="empty">لا توجد طلبات مطابقة للبحث</td></tr>') + '</tbody>';
+    }).join('') : '<tr><td colspan="8" class="empty">لا توجد طلبات مطابقة</td></tr>') + '</tbody>';
 }
 
 ['#q','#per','#sort'].forEach(s => $(s).addEventListener('input', render));$('#chips').addEventListener('click', e => { const b = e.target.closest('[data-f]'); if(b){ filter = b.dataset.f; render(); } });
@@ -331,6 +330,91 @@ $('#tb').addEventListener('click', async e => {
       await api('/api/orders?id=' + encodeURIComponent(id), {method:'DELETE'});
       orders = orders.filter(x => x.id !== id); render(); toast('تم حذف الطلب');
     }catch{ toast('فشل حذف الطلب'); }
+  }
+
+  // تنزيل فاتورة العميل كملف HTML مستقل وشيك جداً
+  if(a === 'download-invoice'){
+    const htmlContent = `<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<title>فاتورة عميل - ${esc(o.code)}</title>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+body{font-family:'Cairo',sans-serif;background:#f8f9fa;color:#111;margin:0;padding:20px;direction:rtl}
+.invoice{max-width:700px;margin:auto;background:#fff;padding:30px;border-radius:12px;box-shadow:0 4px 20px rgba(0,0,0,.08);border:1px solid #eaeaea}
+.header{display:flex;justify-content:space-between;border-bottom:2px solid #111;padding-bottom:15px;margin-bottom:20px}
+.header h1{margin:0;font-size:24px;letter-spacing:1px}
+.info-box{background:#fdfdfd;border:1px solid #eee;padding:15px;border-radius:8px;margin-bottom:20px}
+.info-box p{margin:6px 0;font-size:14px}
+table{width:100%;border-collapse:collapse;margin-bottom:20px;font-size:14px}
+th, td{border:1px solid #ddd;padding:10px;text-align:right}
+th{background:#f1f3f5;color:#333}
+.total-box{display:flex;justify-content:space-between;align-items:center;border-top:2px solid #111;padding-top:15px;font-size:16px;font-weight:700}
+.footer{margin-top:30px;text-align:center;font-size:12px;color:#777;border-top:1px dashed #ccc;padding-top:10px}
+</style>
+</head>
+<body>
+<div class="invoice">
+  <div class="header">
+    <div>
+      <h1>HEXAM STORE</h1>
+      <p style="margin:4px 0 0;color:#666;font-size:13px">فاتورة مبيعات رسمية (الدفع عند الاستلام)</p>
+    </div>
+    <div style="text-align:left">
+      <b>كود الطلب:</b> ${esc(o.code)}<br>
+      <span style="font-size:12px;color:#666">${ft(o.date)}</span>
+    </div>
+  </div>
+
+  <div class="info-box">
+    <p><b>اسم العميل:</b> ${esc(o.name)}</p>
+    <p><b>رقم الموبايل:</b> <span dir="ltr">${esc(o.phone)}</span> ${o.phone2?`/ <span dir="ltr">${esc(o.phone2)}</span>`:''}</p>
+    <p><b>عنوان الشحن:</b> ${esc(o.address)}</p>
+    ${o.note?`<p><b>ملاحظات:</b> ${esc(o.note)}</p>`:''}
+  </div>
+
+  <table>
+    <thead>
+      <tr>
+        <th>المنتج</th>
+        <th style="text-align:center">المقاس</th>
+        <th style="text-align:center">العدد</th>
+        <th style="text-align:left">الإجمالي</th>
+      </tr>
+    </thead>
+    <tbody>
+      ${(o.items||[]).map(i=>`
+        <tr>
+          <td>${esc(i.name)}</td>
+          <td style="text-align:center"><b>${esc(i.size)}</b></td>
+          <td style="text-align:center">${i.qty}</td>
+          <td style="text-align:left">${money(i.price*i.qty)}</td>
+        </tr>
+      `).join('')}
+    </tbody>
+  </table>
+
+  <div class="total-box">
+    <div>إجمالي القطع: ${pcs(o)} قطعة</div>
+    <div style="font-size:18px;color:#000;">الإجمالي المطلوب: ${money(o.total)}</div>
+  </div>
+
+  <div class="footer">
+    شكراً لتسوقك مع HEXAM Store - نتمنى لك تجربة تسوق رائعة!
+  </div>
+</div>
+</body>
+</html>`;
+
+    const blob = new Blob([htmlContent], {type:'text/html;charset=utf-8'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `Invoice-${o.code}.html`;
+    a.click();
+    URL.revokeObjectURL(url);
+    toast('تم تنزيل فاتورة العميل بنجاح');
   }
 
   if(a === 'ship-invoice'){
@@ -413,8 +497,10 @@ $('#csv').onclick = () => {
     (o.items||[]).map(i=>`${i.name} (مقاس ${i.size}) x${i.qty}`).join(' | '),
     pcs(o), o.total, ST[o.status]||o.status, o.acceptedBy||''
   ]);
+  const todayStr = dk(new Date());
   const blob = new Blob(['\ufeff' + [header, ...rows].map(r => r.map(escCsv).join(',')).join('\n')], {type:'text/csv;charset=utf-8'});
   const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
-  a.download = 'hexam-orders-' + dk(new Date()) + '.csv'; a.click();
+  a.download = `hexam-orders-${todayStr}.csv`; a.click();
+  toast('تم تصدير ملف اليوم بنجاح');
 };
 </script></body></html>
