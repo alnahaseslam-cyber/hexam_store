@@ -558,24 +558,25 @@
         </div>
     </footer>
 
-    <script type="module">
-        // --- Cloud order storage (Firebase Firestore). Config lives in firebase-config.js ---
-        import { firebaseConfig } from './firebase-config.js';
-        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
-        import { getFirestore, collection, addDoc, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
-        let db = null;
-        try {
-            if (firebaseConfig && firebaseConfig.projectId && !String(firebaseConfig.projectId).startsWith('YOUR')) {
-                db = getFirestore(initializeApp(firebaseConfig));
-            }
-        } catch (e) { console.warn('Firebase init failed', e); }
+    <script>
+        // --- حفظ الطلب في الداشبورد (Vercel API) ---
         window.saveOrderToCloud = async (order) => {
-            if (!db) return false;
             try {
-                await addDoc(collection(db, 'orders'), { ...order, status: 'new', createdAt: serverTimestamp() });
-                return true;
-            } catch (e) { console.warn('Cloud save failed', e); return false; }
+                const r = await fetch('/api/order', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(order) });
+                if (r.status >= 500) throw new Error('server');
+                return r.ok;
+            } catch (e) {
+                try { const q = JSON.parse(localStorage.getItem('hx_q') || '[]'); q.push(order); localStorage.setItem('hx_q', JSON.stringify(q.slice(-5))); } catch (_) {}
+                return false;
+            }
         };
+        window.addEventListener('load', async () => {
+            try {
+                const q = JSON.parse(localStorage.getItem('hx_q') || '[]'); if (!q.length) return;
+                localStorage.removeItem('hx_q');
+                for (const o of q) await window.saveOrderToCloud(o);
+            } catch (_) {}
+        });
     </script>
     <script>
         // --- Data ---
@@ -631,7 +632,7 @@
             }
         ];
 
-        // آراء العملاء - بتفضل فاضية لحد ما حد يعمل تقييم فعلي من خلال نموذج "شارك رأيك"
+        // آراء العملاء
         let testimonials = [];
 
         let cart = [];
@@ -869,9 +870,6 @@
             testimonials = [{ name, rating: fbSelectedRating, text }, ...testimonials];
             renderTestimonials();
             closeFeedbackModal();
-
-            // بنبعت التقييم للبوت الجديد كمان عشان يوصل لصاحب المتجر
-            sendTelegramMessage(`⭐ تقييم جديد من عميل\n\n👤 الاسم: ${name}\n⭐ التقييم: ${fbSelectedRating}/5\n💬 الرأي: ${text}`);
 
             showCustomAlert('شكراً ليك!', 'تم إرسال رأيك بنجاح، بجد نقدر تفاعلك معانا.', 'success');
         }
@@ -1148,23 +1146,7 @@
             totalEl.textContent = total + ' EGP';
         }
 
-        // --- Telegram helper (send via same-origin proxy, no token in the browser) ---
-        function sendTelegramMessage(text) {
-            fetch('/api/notify', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ text })
-            })
-            .then(res => res.json().catch(() => ({})))
-            .then(data => {
-                if (data && data.ok === false) {
-                    console.warn('Notify proxy error:', data.description || data);
-                }
-            })
-            .catch(err => console.warn('Notify network error:', err));
-        }
-
-        // --- Checkout & Telegram Integration ---
+        // --- Checkout Integration ---
         function goToCheckout() {
             if(cart.length === 0) {
                 showCustomAlert('تنبيه', 'السلة فارغة، أضف منتجات أولاً للمتابعة.', 'warning');
@@ -1194,7 +1176,7 @@
             return /^[\u0600-\u06FF0-9\s,.\-\/]+$/.test(value);
         }
 
-        function processOrder(e) {
+        async function processOrder(e) {
             e.preventDefault();
             const name = document.getElementById('co-name').value.trim();
             const phone = document.getElementById('co-phone').value.trim();
@@ -1231,39 +1213,21 @@
             let totalAmount = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
             let orderCode = generateOrderCode();
 
-            let itemsDetails = cart.map((item, idx) => 
-                `▫️ القطعة (${idx + 1}): ${item.name}\n   - المقاس: ${item.size}\n   - العدد: ${item.qty}\n   - السعر: ${item.price * item.qty} ج.م`
-            ).join('\n\n');
-
-            let telegramMessage = `🛍️ طلب جديد عبر متجر HEXAM 🛍️\n\n` +
-                `🔖 كود الطلب: ${orderCode}\n\n` +
-                `👤 بيانات العميل:\n` +
-                `• الاسم: ${name}\n` +
-                `• الهاتف الأساسي: ${phone}\n` +
-                (phone2 ? `• الهاتف الإضافي: ${phone2}\n` : ``) +
-                `• العنوان: ${address}\n` +
-                (note ? `• ملاحظة: ${note}\n` : ``) +
-                `\n📦 المنتجات:\n${itemsDetails}\n\n` +
-                `💰 الإجمالي الكلي: ${totalAmount} ج.م\n` +
-                `🚚 الدفع: عند الاستلام`;
-
             const submitBtn = document.getElementById('co-submit-btn');
             submitBtn.disabled = true;
             submitBtn.textContent = 'جاري إرسال الطلب...';
 
             // 1) حفظ الطلب في الداشبورد (مصدر أساسي)
             if (window.saveOrderToCloud) {
-                window.saveOrderToCloud({
+                await window.saveOrderToCloud({
                     code: orderCode, name, phone, phone2: phone2 || '', address, note: note || '',
                     total: totalAmount,
                     items: cart.map(i => ({ name: String(i.name).trim(), size: String(i.size), qty: Number(i.qty), price: Number(i.price) }))
                 });
             }
-            // 2) إشعار تليجرام (احتياطي)
-            sendTelegramMessage(telegramMessage);
 
             submitBtn.disabled = false;
-            submitBtn.textContent =   'تأكيد الطلب ';
+            submitBtn.textContent = 'تأكيد الطلب';
 
             cart = [];
             updateCartUI();
